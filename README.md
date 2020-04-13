@@ -17,7 +17,7 @@ This repository of ansible code will perform the following steps from a linux ho
 
 A Linux host is required for running these Ansible playbooks.  This environment has been tested with Ubuntu 18.04 LTS. The host must be able to communicate to the target vcenter and subsequent gke admin host that is created.
 
-Note: If running on Simplivity DVM you need to manually download the ova file and enter the path to the file in the host variable file `gke-admin-ws.yml`
+Note: If running on Simplivity DVM you need to manually download the ova file and enter the path to the file in the host variable file `Anthos-on-SimpliVity/inventory/host_vars/gke-admin-ws.yml` This variable file allows for additional admin workstation configuration.
 
 * Google Cloud SDK must be installed on the linux host.
   * Google web page - https://cloud.google.com/sdk/docs
