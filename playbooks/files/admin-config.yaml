@@ -6,7 +6,7 @@ vcenter:
   credentials:
     address: "10.1.223.196"
     username: "administrator@vsphere.local"
-    password: "***REMOVED***L@B"
+    password: PASSWORD
   datacenter: "Datacenter"
   datastore: "ds1"
   cluster: "New Cluster"
@@ -47,7 +47,7 @@ admincluster:
     credentials:
       address: "10.1.222.170"
       username: "admin"
-      password: "***REMOVED***L@B"
+      password: PASSWORD
     partition: "Spanned_VIP"
     # # Optionally specify a pool name if using SNAT
     # snatpoolname: ""
@@ -98,7 +98,7 @@ privateregistryconfig:
   credentials:
     address: "16.100.209.193:5005"
     username: "svtbuild"
-    password: "***REMOVED***"
+    password: PASSWORD
 #   # The absolute or relative path to the CA certificate for this registry
   cacertpath: "/home/ubuntu/gke_admin_wrkst_private/private_docker_reg/registry.pem"
 # The absolute or relative path to the GCP service account key that will be used to

@@ -7,7 +7,7 @@ vCenter:
   credentials:
     address: "10.1.223.196"
     username: "Administrator@vsphere.local"
-    password: "***REMOVED***L@B"
+    password: PASSWORD
   datacenter: "Datacenter"
   datastore: "ds1"
   cluster: "New Cluster"
