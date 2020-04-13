@@ -1,0 +1,26 @@
+---
+- name: read in json file
+  set_fact:
+    vars:
+    #contents: "{{ lookup('file', 'test.json') | replace('\\u001b[', '') | replace('92m', '') | replace('0m', '')  }}"
+    contents: "{{ lookup('file', 'test.json') }}"
+
+- name: output
+  debug:
+    msg: "{{ contents.msg[1].changed }}"
+
+- name: transform
+  set_fact:
+    vars:
+    new_contents: "{{ ''.join(contents | json_query('msg[].stdout_lines') | replace('\\u001b[', '') | replace('92m', '') | replace('0m', '') ) }}"
+    
+- name: output
+  debug:
+    msg: "{{ new_contents }}"
+
+
+
+
+# msg: "{{ contents | json_query('msg[].stdout_lines') | regex_replace('.+(\\u001b\[K)+', '\\1') }}
+
+

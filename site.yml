@@ -1,0 +1,5 @@
+---
+
+- import_playbook: playbooks/get_prereq.yml
+- import_playbook: playbooks/deploy_admin_wrkst.yml
+- import_playbook: playbooks/create_cluster.yml

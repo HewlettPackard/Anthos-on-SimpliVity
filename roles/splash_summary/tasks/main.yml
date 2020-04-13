@@ -1,0 +1,11 @@
+---
+# tasks file for anthos_admin_splash
+
+- name: Read gkeadm file from disk
+  delegate_to: localhost
+  vars:
+    contents: "{{ lookup('file', '{{ output_directory}}/{{ adminWorkstation.name }}') }}"
+  debug:
+    msg: 
+      - "Anthos Workstation Deployment Summary"
+      - "{{ contents.split('\n') }}"

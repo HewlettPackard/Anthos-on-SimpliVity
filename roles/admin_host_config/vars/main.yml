@@ -1,0 +1,32 @@
+---
+# vars file for anthos_admin_config
+
+
+cloud_sdk_pkgs: 
+  - kubectl
+  - google-cloud-sdk-minikube
+  - google-cloud-sdk
+  - google-cloud-sdk-app-engine-grpc
+  - google-cloud-sdk-kind
+  - google-cloud-sdk-pubsub-emulator
+  - google-cloud-sdk-app-engine-go
+  - google-cloud-sdk-firestore-emulator
+  - google-cloud-sdk-cloud-build-local
+  - google-cloud-sdk-datastore-emulator
+  - google-cloud-sdk-kpt
+  - google-cloud-sdk-app-engine-python
+  - google-cloud-sdk-skaffold
+  - google-cloud-sdk-cbt
+  - google-cloud-sdk-bigtable-emulator
+  - google-cloud-sdk-app-engine-python-extras
+  - google-cloud-sdk-datalab
+  - google-cloud-sdk-app-engine-java
+
+
+update_cloud_SDK_command: |
+    sudo apt-get update && sudo apt-get -y --only-upgrade install
+    kubectl google-cloud-sdk google-cloud-sdk-app-engine-grpc google-cloud-sdk-pubsub-emulator
+    google-cloud-sdk-app-engine-go google-cloud-sdk-firestore-emulator google-cloud-sdk-cloud-build-local
+    google-cloud-sdk-datastore-emulator google-cloud-sdk-app-engine-python google-cloud-sdk-cbt
+    google-cloud-sdk-bigtable-emulator google-cloud-sdk-app-engine-python-extras google-cloud-sdk-datalab
+    google-cloud-sdk-app-engine-java

@@ -1,0 +1,6 @@
+#Set default behavior
+* text=auto
+
+#Files that will be uploaded to Linux and need to keep lf endings
+*.tmpl text eol=lf
+*.sh text eol=lf

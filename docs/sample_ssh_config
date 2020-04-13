@@ -1,0 +1,7 @@
+Host stash.simplivt.local
+  Hostname stash.simplivt.local
+  Port 7999
+  User git
+  IdentityFile ~/.ssh/[private ssh key for bitbucket]
+  IdentitiesOnly yes
+  StrictHostKeyChecking no

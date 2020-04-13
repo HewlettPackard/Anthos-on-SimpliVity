@@ -1,0 +1,11 @@
+# Main repo
+# https://releases.hashicorp.com/terraform/
+
+# Replace version as needed
+# Extract binary to location in search PATH and make executable
+
+# Linux
+wget https://releases.hashicorp.com/terraform/0.12.20/terraform_0.12.20_linux_amd64.zip
+
+# Windows Powershell
+wget https://releases.hashicorp.com/terraform/0.12.20/terraform_0.12.20_windows_amd64.zip

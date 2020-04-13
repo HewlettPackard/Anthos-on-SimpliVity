@@ -1,0 +1,31 @@
+---
+# tasks file for anthos_admin_gitpull
+
+# git pull HPE repo for deploying and configuring Anthos GKE on-prem
+- name: Copy over ssh config files needed for git access
+  copy:
+    src: "{{ ssh_config_path }}"
+    dest: /home/{{ ansible_user }}
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0600
+
+- name: Debug
+  debug:
+     msg: "The ansible user is {{ ansible_ssh_user }}"
+     verbosity: 2
+
+- name: Pull HPE repo for Anthos deployment
+  become: no
+  git:
+    repo: "{{ anthos_deploy_git.repo_url }}"
+    dest: "/home/{{ ansible_user }}/{{ anthos_deploy_git.repo_name }}"
+    key_file: "/home/{{ ansible_user }}/"
+
+# git pull backup data for existing anthos cluster keys and configs
+- name: Pull userdata repo
+  become: no
+  git:
+    repo: "{{ anthos_userdata_git.repo_url }}"
+    dest: "/home/{{ ansible_user }}/{{ anthos_userdata_git.repo_name }}"
+    key_file: "/home/{{ ansible_user }}/"

@@ -1,0 +1,82 @@
+---
+# tasks file for prereqs
+- name: Create Output directory
+  become: false 
+  file:
+    path: "{{ output_directory }}"
+    state: directory
+
+- name: Clear env if proxyUrl is not defined
+  set_fact:
+    env: {}
+  when: proxyUrl is not defined
+
+- name: Set env if proxyUrl is defined
+  set_fact:
+    env:
+      http_proxy: "{{ proxyUrl }}"
+      https_proxy: "{{ proxyUrl }}"
+      no_proxy: "{{ no_proxy }}"
+  when: proxyUrl is defined
+
+- name: Install Google repo file
+  vars:
+    ansible_python_interpreter: "{{ role_python }}"
+  apt_repository:
+    repo: deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main
+    state: present
+    update_cache: no
+    filename: google-cloud-sdk
+
+- name: Install Google repository key
+  vars:
+    ansible_python_interpreter: "{{ role_python }}"
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+    keyring: /usr/share/keyrings/cloud.google.gpg
+  environment: "{{ env }}"
+
+- name: Install required packages for Cloud SDK
+  vars:
+    ansible_python_interpreter: "{{ role_python }}"
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - google-cloud-sdk
+    state: present
+    update_cache: yes
+  environment: "{{ env }}"
+
+- name: Configure gcloud
+  become: false
+  shell: |
+    gcloud config set project "{{ gcloud_project }}"
+    gcloud config set proxy/type "{{ proxy_type }}"
+    gcloud config set proxy/address "{{ proxy_address }}"
+    gcloud config set proxy/port "{{ proxy_port }}"
+
+- name: Activate GCP whitelisted key
+  become: false
+  command: |
+    gcloud auth activate-service-account --project {{ gcloud_project }} --key-file {{ gcp.whitelistedServiceAccountKeyPath }}
+
+- name: Check for existance of gkeadm binary locally
+  stat:
+    path: /usr/local/bin/gkeadm
+  register: gkeadm_check
+    
+- name: Download gkeadm binary if it doesn't exist
+  become: false
+  shell: |
+    gsutil cp gs://gke-on-prem-release-public/gkeadm/{{ anthos_version }}/linux/gkeadm /tmp
+  when: gkeadm_check.stat.exists == false
+
+- name: Move gkeadm and set execute permissions
+  copy:
+    src: /tmp/gkeadm
+    dest: /usr/local/bin/gkeadm
+    mode: 0655
+  when: gkeadm_check.stat.exists == false

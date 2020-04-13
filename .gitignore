@@ -1,0 +1,9 @@
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform.tfstate.lock.info
+ansible/logs/*
+ansible/gke-adm*
+ansible/admin-ws-config.yaml
+ansible/playbooks/logs/*
+*/logs/*

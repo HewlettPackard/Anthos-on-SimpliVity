@@ -1,0 +1,6 @@
+---
+ansible_connection: local
+# Need to define this for running from python virtualenvs
+# otherwise localhost doesn't pull python dependencies for vmware_guest
+# when running in python 3 virtualenv uncomment this line
+ansible_python_interpreter: "{{ ansible_playbook_python }}"

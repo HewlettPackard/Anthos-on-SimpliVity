@@ -1,0 +1,25 @@
+# The Google Cloud SDK needs to be installed on the system used to download the Anthos Admin Workstation
+# and deploy the OVA to your vcenter.
+# Google web page - https://cloud.google.com/sdk/docs/quickstarts
+
+# Windows instructions behind a proxy
+# Manually download versioned archive
+# https://cloud.google.com/sdk/docs/downloads-versioned-archives
+# Current link
+  wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-281.0.0-windows-x86_64-bundled-python.zip
+
+# Extract and run
+  .\google-cloud-sdk\install.bat
+
+# Linux instruction behind a proxy
+# Manually download versioned archive
+# https://cloud.google.com/sdk/docs/downloads-versioned-archives
+# Current link
+  wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-281.0.0-linux-x86_64.tar.gz
+
+# Extract and run
+  ./google-cloud-sdk/install.sh
+
+
+# Post Install instructions
+  ./google-cloud-sdk/bin/gcloud init

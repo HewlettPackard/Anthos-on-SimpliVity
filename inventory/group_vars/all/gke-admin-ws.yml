@@ -1,0 +1,43 @@
+---
+# Base Anthos Version
+anthos_version: '1.3.0-gke.16'
+
+# Path to gke admin workstation ova file to install
+gkeadm_ova_path: '/home/sgifford/Downloads/1.3.0-gke.16/gke-on-prem-admin-appliance-vsphere-1.3.0-gke.16.ova'
+
+# Docker bip (base IP) can be changed if the default conflict with your environment
+docker_bip: '192.68.0.1/16'
+
+# A private Docker registry is commonly used in Air-Gapped installations
+# FIXME: Note ssl cert for this registry is currently held in ansible role directory
+private_docker_registry: true
+private_reg_ip: '16.100.209.193'
+private_reg_port: '5005'
+
+# Proxy definitions -- gkeadm will have it's own. For now these are needed for post deploy configuration
+proxy_address: '16.100.208.216'
+proxy_port: '8888'
+proxy_type: 'http'
+no_proxy: '.hcilabs.hpecorp.net,.simplivt.local'
+
+# GCP project to set.  gkeadm does not currently set this.
+gcloud_project: 'deep-thought-259715'
+
+# Path the yaml file created by running 'gkeadm create config'
+gkeadm_config: '/home/sgifford/gke_admin_wrkst_private/admin-ws-config.yaml'
+
+# Path to directory containing desired .ssh directory contents. Used for git repo cloning.
+ssh_config_path: '/home/sgifford/gke_admin_wrkst_private/dot-cfg-files/.ssh'
+
+# Path to ssh private key to install on admin workstation
+# This key will also be used by ansible to connect to admin workstation
+ansible_ssh_private_key_file: '/home/sgifford/gke_admin_wrkst_private/dot-cfg-files/.ssh/vsphere_workstation'
+
+# Path to repos to pull after deployment. Do not change anthos_deploy_git, but update the anthos_userdata_git entry.
+anthos_deploy_git:
+  repo_name: anthos_workstation_files
+  repo_url: 'ssh://git@stash.simplivt.local:7999/soleng/anthos_wrkstation_files.git'
+anthos_userdata_git:
+  repo_name: gke_admin_wrkst_private
+# Change this url to match your private user data repo path
+  repo_url: 'ssh://git@stash.simplivt.local:7999/~sgifford/gke_admin_wrkst_private.git'

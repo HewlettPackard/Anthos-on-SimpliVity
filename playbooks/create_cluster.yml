@@ -1,0 +1,7 @@
+---
+- hosts: anthos_admin
+  become: no
+  gather_facts: false
+
+  roles:
+    - role: ../roles/create_user_cluster

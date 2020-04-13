@@ -1,0 +1,21 @@
+output_directory: '/home/{{ ansible_user }}/output'
+log_directory: '/home/{{ ansible_user }}/logs'
+
+cluster_configurations_path: '/home/ubuntu/cluster-configurations'
+cluster_kubeconfig_path: '/home/ubuntu/kubeconfigs'
+admin_cluster_kubeconfig: 'kubeconfig'
+gkectl_check_flags: '--skip-validation-vips --fast'
+gkectl_create_flags: '--skip-validation-all'
+gkectl_run_prepare: true
+gkectl_prepare_flags: '--skip-validation-all'
+
+create_admin_cluster: false
+create_user_cluster: false
+enable_config_check: false
+gke_cluster_config:
+    - name: 'admin-config.yaml'
+      local_path: 'admin-config.yaml'
+    - name: 'user1-config.yaml'
+      local_path: 'user1-config.yaml'
+    - name: 'user2-config.yaml'
+      local_path: 'user2-config.yaml'

@@ -1,0 +1,12 @@
+---
+- hosts: anthos_admin
+  become: yes
+  gather_facts: false
+
+  roles:
+    - role: ../roles/deploy_admin_wrkst
+    - role: ../roles/docker_config
+    - role: ../roles/apt_proxy
+    - role: ../roles/admin_host_config
+    - role: ../roles/userdata
+    - role: ../roles/splash_summary

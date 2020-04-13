@@ -1,0 +1,45 @@
+---
+# tasks file for anthos_admin_docker_config
+
+# Configure anthos admin workstation for private docker registry
+- name: Copy private docker registry cert to host
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - { src: '../files/registry.crt', dest: '/etc/docker/certs.d/{{ private_reg_ip }}:{{ private_reg_port }}/'}
+    - { src: '../files/registry.crt', dest: '/usr/local/share/ca-certificates/registry.crt'}
+  when: private_docker_registry
+
+# update the system ca certs for private docker registry
+- name: update system certificates
+  command: |
+     update-ca-certificates
+  when: private_docker_registry
+
+# Configure anthos admin docker BASE IP to resolve conflict with internal network
+- name: Update docker BIP through daemon.json file
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+  when: docker_bip is defined
+  notify: restart_docker
+
+- name: Force Docker (and all) handlers to run to get bip changed
+  meta: flush_handlers
+
+# Add proxy to docker daemon
+- name: Add http-proxy.conf file to docker systemd
+  template:
+    src: http-proxy.conf.j2
+    dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_docker
