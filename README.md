@@ -170,13 +170,58 @@ anthos_userdata_git:
 
 ## Anthos GKE on-prem config files
 
-The yaml config files needed to deploy gke on-prem clusters should be placed in `playbooks/files` directory and the filenames entered into the all.yml file described below.
+Sample yaml config files needed to deploy gke on-prem clusters are located in `playbooks/files` directory. The actual files needed will contain sensitive information and should be kept separately. (In a secure git repo or ...) The paths to the files should be entered into the all.yml file described below.
+
+---
+
+## Protected Passwords/Keys for F5 Configuration
+
+The file `inventory/group_vars/all/vault.yml` contains the following variables used for the F5 playbook:
+
+```yaml
+vault_f5_root_password: "password"
+vault_f5_admin_password: "password"
+vault_f5_license_key: "license_key"
+```
+
+These need to entered before running the bigip_anthos.yml playbook.  To edit the file:
+
+* source your python virtualenv
+* run `ansible-vault edit inventory/group_vars/all/vault.yml`
+* type in the password when prompted (will provide password separately)
+* edit/save file
+
+When running ansible-playbook, you will need to specify `--ask-vault-pass` on command line.
 
 ---
 
 ## Playbook execution control
 
-The file `inventory/group_vars/all/all.yml` contains variables that control certain aspects of the ansible execution.
+The file `inventory/group_vars/all/all.yml` contains variables that control certain aspects of the ansible execution including file locations and GKE on-prem cluster creation info.
+
+```yaml
+output_directory: '/home/{{ ansible_user }}/output'
+log_directory: '/home/{{ ansible_user }}/logs'
+
+cluster_configurations_path: '/home/ubuntu/cluster-configurations'
+cluster_kubeconfig_path: '/home/ubuntu/kubeconfigs'
+admin_cluster_kubeconfig: 'kubeconfig'
+gkectl_check_flags: '--skip-validation-vips --fast'
+gkectl_create_flags: '--skip-validation-all'
+gkectl_run_prepare: true
+gkectl_prepare_flags: '--skip-validation-all'
+
+create_admin_cluster: true
+create_user_cluster: true
+enable_config_check: false
+gke_cluster_config:
+    - name: 'admin-config.yaml'
+      local_path: '/home/sgifford/gke_admin_wrkst_private/gkeonprem-config/admin-config.yaml'
+    - name: 'user1-config.yaml'
+      local_path: '/home/sgifford/gke_admin_wrkst_private/gkeonprem-config/user1-config.yaml'
+    - name: 'user2-config.yaml'
+      local_path: '/home/sgifford/gke_admin_wrkst_private/gkeonprem-config/user2-config.yaml'
+```
 
 ---
 
@@ -185,7 +230,7 @@ The file `inventory/group_vars/all/all.yml` contains variables that control cert
 * Ensure all variable files have been edited to reflect your environment
 * cd anthos_admin_deploy/ansible directory
 * Activate your python virtualenv created earlier `source 'path_to_env/bin/activate'`
-* Execute `ansible-playbook site.yml`
+* Execute `ansible-playbook site.yml --ask-vault-pass`
 
 The last debug message from ansible will provide admin workstation login information similar to the following:
 

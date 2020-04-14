@@ -4,4 +4,4 @@
   gather_facts: false
 
   roles:
-    - role: ../roles/create_user_cluster
+    - role: admin_workstation/create_user_cluster
