@@ -1,0 +1,35 @@
+---
+# tasks file for F5_network_config
+- name: Add VLAN 1700 as untagged to interface 1.1
+  bigip_vlan:
+    untagged_interface: 1.1
+    name: "{{ internal_vlan_name }}"
+    tag: "{{ internal_vlan_tag }}"
+    provider: "{{ provider }}"
+  delegate_to: localhost
+
+- name: Add VLAN 1732 as untagged to interface 1.2
+  bigip_vlan:
+    untagged_interface: 1.2
+    name: "{{ external_vlan_name }}"
+    tag: "{{ external_vlan_tag }}"
+    provider: "{{ provider }}"
+  delegate_to: localhost
+
+- name: Create Self IP for internal VLAN
+  bigip_selfip:
+    address: "{{ internal_vlan_selfip }}"
+    name: "{{ internal_vlan_selfip_name }}"
+    netmask: "{{ internal_vlan_selfip_netmask }}"
+    vlan: "{{ internal_vlan_name }}"
+    provider: "{{ provider }}"
+  delegate_to: localhost
+
+- name: Create Self IP for external VLAN
+  bigip_selfip:
+    address: "{{ external_vlan_selfip }}"
+    name: "{{ external_vlan_selfip_name }}"
+    netmask: "{{ external_vlan_selfip_netmask }}"
+    vlan: "{{ external_vlan_name }}"
+    provider: "{{ provider }}"
+  delegate_to: localhost

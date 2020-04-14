@@ -6,4 +6,5 @@ ansible/logs/*
 ansible/gke-adm*
 ansible/admin-ws-config.yaml
 ansible/playbooks/logs/*
-*/logs/*
+logs/*
+logs/gkeadm.INFO

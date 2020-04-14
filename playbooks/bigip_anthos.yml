@@ -1,0 +1,17 @@
+---
+- hosts: my-f5
+  connection: local
+
+  collections:
+   - f5networks.f5_modules
+
+  roles:
+    - role: f5_loadbalancer/f5_host_config
+    - role: f5_loadbalancer/f5_license_config
+    - role: f5_loadbalancer/f5_network_config
+    - role: f5_loadbalancer/f5_partition_config
+    - role: f5_loadbalancer/anthos_f5_config
+
+  tasks:
+    - include_tasks: tasks/f5_save_configuration.yml
+      when: f5_save

@@ -3,3 +3,6 @@ localhost
 
 [anthos_admin]
 gke-admin-ws
+
+[f5]
+my-f5
