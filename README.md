@@ -2,7 +2,7 @@
 
 # Ansible Deployment of Anthos Workstation and GKE on-prem Clusters
 
-Google Anthos requires an administration workstation to be installed to perform on-prem cluster deploymnents.
+Google Anthos requires an administration workstation to be installed to perform on-prem cluster deployments.
 
 This repository of ansible code will perform the following steps from a linux host of your choice **(as long as it's Ubuntu for now)**:
 
@@ -37,7 +37,7 @@ The use of a Python Virtual environment allows for flexibility in ansible host c
 The provided script `prerequisites/ansible-setup.sh` will build the python virtualenv needed to execute the playbooks.  
 
 ```text
-~/anthos_admin_deploy$ ./prerequisite/ansible-setup.sh -h
+~/Anthos-on-SimpliVity$ ./prerequisite/ansible-setup.sh -h
 
 This script is used to create a python3 virtualenv with ansible operating environment
 Syntax: ansible-setup.sh [-b|d|h]
@@ -53,7 +53,7 @@ ex.   ansible-setup.sh -b /home/sgifford/virtualenvs -d ansible29
 
 ## Variables Needed
 
-### gkeadm Variables
+### gkeadm Variables  (The GKEADM steps are deprecated, we will use a base gkeadm file and this ansible script will download GKEADM. User may not have GKEADM at this point)
 
 `gkeadm` requires a yaml file defining the parameters for the admin workstation. To initialize the file:
 
