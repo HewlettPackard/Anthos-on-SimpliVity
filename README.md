@@ -234,7 +234,7 @@ gke_cluster_config:
 ## Ansible Execution
 
 * Ensure all variable files have been edited to reflect your environment
-* cd anthos_admin_deploy/ansible directory
+* cd Anthos-on-SimpliVity directory
 * Activate your python virtualenv created earlier by ansible-setup.sh  `source 'path_to_env/bin/activate'`
 * Execute `ansible-playbook site.yml --ask-vault-pass`
 
