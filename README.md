@@ -17,7 +17,7 @@ This repository of ansible code will perform the following steps from a linux ho
 
 A Linux host is required for running these Ansible playbooks.  This environment has been tested with Ubuntu 18.04 LTS. The host must be able to communicate to the target vcenter and subsequent gke admin host that is created.
 
-Note: If running on Simplivity DVM you need to manually download the ova file and enter the path to the file in the host variable file `gke-admin-ws.yml`
+Note: If running on Simplivity DVM you need to manually download the ova file and enter the path to the file in the host variable file `inventory/group_vars/all/all.yml`
 
 * Google Cloud SDK must be installed on the linux host.
   * Google web page - https://cloud.google.com/sdk/docs
@@ -58,11 +58,15 @@ ex.   ansible-setup.sh -b /home/sgifford/virtualenvs -d ansible29
 `gkeadm` requires a yaml file defining the parameters for the admin workstation. To initialize the file:
 
 * Run `gkeadm create config` to accept the default filename (admin-ws-config.yaml) and path (current dir).
-* Run `gkeadm create config --config 'path/filename.yaml'` to specifiy custom path and filename. This file should be located in the `inventory/group_vars/all directory`
+* Run `gkeadm create config --config 'path/filename.yaml'` to specifiy custom path and filename.
+
+This file will contain potentially sensitive information (login credentials) and should be located in a secure directory.
+
+The location of the file will need to be entered in `inventory/group_vars/all/all.yml` under the `gkeadm_config:` variable.
 
 The resulting yaml file will look similar to this but all fields will be empty.  You can also use an existing file and edit as needed.
 
-These can be customized by editing the file `inventory/group_vars/all/admin-ws-config.yml` see sample below.
+These can be customized by editing the file `docs/sample-admin-ws-config.yml` and moving it to a secure directory. see sample below.
 
 ```yaml
 gcp:
@@ -121,7 +125,7 @@ Including:
 * Configure docker proxy and private registry
 * Configure git repos to be pulled automatically
 
-These can be customized by editing the file `inventory/group_vars/all/gke-admin-ws.yml` see sample below.
+These can be customized by editing the file `inventory/group_vars/all/all.yml` see sample below.
 
 ```yaml
 ---
@@ -170,7 +174,7 @@ anthos_userdata_git:
 
 ## Anthos GKE on-prem config files
 
-Sample yaml config files needed to deploy gke on-prem clusters are located in `playbooks/files` directory. The actual files needed will contain sensitive information and should be kept separately. (In a secure git repo or ...) The paths to the files should be entered into the all.yml file described below.
+Sample yaml config files needed to deploy gke on-prem clusters are located in `docs` directory. The actual files needed will contain sensitive information and should be kept separately. (In a secure git repo or ...) The paths to the files should be entered into the `inventory/group_vars/all/all.yml` file under the `gke_cluster_config:` variable.
 
 ---
 
@@ -197,7 +201,7 @@ When running ansible-playbook, you will need to specify `--ask-vault-pass` on co
 
 ## Playbook execution control
 
-The file `inventory/group_vars/all/all.yml` contains variables that control certain aspects of the ansible execution including file locations and GKE on-prem cluster creation info.
+The file `inventory/group_vars/all/all.yml` additionally contains variables that control certain aspects of the ansible execution including file locations and GKE on-prem cluster creation info.
 
 ```yaml
 output_directory: '/home/{{ ansible_user }}/output'

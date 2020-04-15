@@ -1,0 +1,44 @@
+---
+# Currently gkeadm cannot download the GKE admin workstation OVA properly if the /tmp and working directory are in different
+# filesystems.  This task will check for that condition and set the download_ova var appropriately
+
+- name: Check filesystems for gke admin ova download
+  command: |
+    df .
+  register: cwd_df
+
+- name: set tmp fact
+  set_fact:
+    cwd_mount: "{{ cwd_df.stdout | regex_search('(\/dev\/[^\\s]+)', '\\1', multiline=true) | checksum }}"
+
+- name: cwd mount out
+  debug:
+    msg: "{{ cwd_mount }}"
+    verbosity: 3
+
+- name: Check filesystems for gke admin ova download
+  command: |
+    df /tmp
+  register: tmp_df
+
+- name: set tmp fact
+  set_fact:
+    tmp_mount: "{{ tmp_df.stdout | regex_search('(\/dev\/[^\\s]+)', '\\1', multiline=true) | checksum }}"
+
+- name: tmp output
+  debug:
+    msg: "{{ tmp_mount }}"
+    verbosity: 3
+
+- name: Force OVA download flag to false
+  set_fact:
+    download_ova: false
+
+- name: Set OVA download flag
+  set_fact:
+    download_ova: true
+  when: cwd_mount != tmp_mount
+
+- name: OVA flag state
+  debug:
+    msg: "{{ download_ova }}"

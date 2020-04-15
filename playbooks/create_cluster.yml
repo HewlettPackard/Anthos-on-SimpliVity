@@ -3,5 +3,8 @@
   become: no
   gather_facts: false
 
+  vars_files:
+    - "{{ gkeadm_config }}"
+
   roles:
     - role: admin_workstation/create_user_cluster

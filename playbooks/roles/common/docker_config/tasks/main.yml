@@ -10,8 +10,8 @@
     group: root
     mode: 0644
   with_items:
-    - { src: '../files/registry.crt', dest: '/etc/docker/certs.d/{{ private_reg_ip }}:{{ private_reg_port }}/'}
-    - { src: '../files/registry.crt', dest: '/usr/local/share/ca-certificates/registry.crt'}
+    - { src: '{{ private_reg_cert_path }}', dest: '/etc/docker/certs.d/{{ private_reg_ip }}:{{ private_reg_port }}/'}
+    - { src: '{{ private_reg_cert_path }}', dest: '/usr/local/share/ca-certificates/registry.crt'}
   when: private_docker_registry
 
 # update the system ca certs for private docker registry
