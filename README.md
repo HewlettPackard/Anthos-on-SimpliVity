@@ -53,14 +53,16 @@ ex.   ansible-setup.sh -b /home/sgifford/virtualenvs -d ansible29
 
 ## Variables Needed
 
-### gkeadm Variables  (The GKEADM steps are deprecated, we will use a base gkeadm file and this ansible script will download GKEADM. User may not have GKEADM at this point)
+### gkeadm Variables  (The GKEADM Run steps are deprecated, we will use a base gkeadm file and this ansible script will download GKEADM. User may not have GKEADM at this point)
 
 `gkeadm` requires a yaml file defining the parameters for the admin workstation. To initialize the file:
 
 * Run `gkeadm create config` to accept the default filename (admin-ws-config.yaml) and path (current dir).
 * Run `gkeadm create config --config 'path/filename.yaml'` to specifiy custom path and filename. This file should be located in the `inventory/group_vars/all directory`
 
-The resulting yaml file will look similar to this but all fields will be empty.  You can also use an existing file and edit as needed.
+The resulting yaml file will look similar to this but all fields will be empty.  
+
+You can also use an existing file and edit as needed.
 
 These can be customized by editing the file `inventory/group_vars/all/admin-ws-config.yml` see sample below.
 
