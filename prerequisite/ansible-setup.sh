@@ -43,7 +43,7 @@ done
 
 # Test parameters
 if [ -z "$venv_dir" ]; then
-    printf "%s\nMust specify target virtualenv directory\n"
+    printf "%s\nERROR: \e[1;31m Must specify a name to use for the target virtualenvs directory \e[0m\n\n"
     Help
     exit
 fi
