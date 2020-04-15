@@ -1,5 +1,9 @@
 ---
 # tasks file for prereqs
+- name: Check filesystem
+  include_tasks:
+      file: tasks/prereq_for_download.yml
+
 - name: Create Output directory
   become: false 
   file:

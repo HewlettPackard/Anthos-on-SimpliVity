@@ -1,25 +1,24 @@
 gcp:
   # Path of the whitelisted service account's JSON key file
-  whitelistedServiceAccountKeyPath: "/home/sgifford/gke_admin_wrkst_private/gkeonprem-keys/whitelisted-key.json"
+  whitelistedServiceAccountKeyPath: ""
 # Specify which vCenter resources to use
 vCenter:
   # The credentials and address GKE On-Prem should use to connect to vCenter
   credentials:
-    address: "10.1.223.196"
-    username: "Administrator@vsphere.local"
-    password: PASSWORD
-  datacenter: "Datacenter"
-  datastore: "ds1"
-  cluster: "New Cluster"
-  network: "VM Network 2"
-  resourcePool: "New Cluster/Resources/"
-  # resourcePool: "New Cluster/Resources/Anthos_1.2"
+    address: ""
+    username: ""
+    password: ""
+  datacenter: ""
+  datastore: ""
+  cluster: ""
+  network: ""
+  resourcePool: ""
   # Provide the path to vCenter CA certificate pub key for SSL verification
-  caCertPath: "/home/sgifford/gke_admin_wrkst_private/vmware/vcenter.pem"
+  caCertPath: ""
 # The URL of the proxy for the jump host
-proxyUrl: "http://16.100.208.216:8888"
+proxyUrl: ""
 adminWorkstation:
-  name: gke-adm-ws13-test2
+  name: gke-admin-ws-1.3.0-200415-150312
   cpus: 4
   memoryMB: 8192
   # The disk size of the admin workstation in GB. It is recommended to use a disk
@@ -27,7 +26,7 @@ adminWorkstation:
   diskGB: 50
   network:
     # The IP allocation mode: 'dhcp' or 'static'
-    ipAllocationMode: "dhcp"
+    ipAllocationMode: ""
     # # The host config in static IP mode. Do not include if using DHCP
     # hostConfig:
     #   # The IPv4 static IP address for the admin workstation
@@ -41,5 +40,5 @@ adminWorkstation:
     #   dns:
     #   - ""
   # The URL of the proxy for the admin workstation
-  proxyUrl: "http://16.100.208.216:8888"
-  ntpServer: hou-ntp1.hcilabs.hpecorp.net
+  proxyUrl: ""
+  ntpServer: ntp.ubuntu.com

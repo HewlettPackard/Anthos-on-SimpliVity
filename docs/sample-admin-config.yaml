@@ -5,8 +5,8 @@ vcenter:
   # The credentials and address GKE should use to connect to vCenter
   credentials:
     address: "10.1.223.196"
-    username: "administrator@vsphere.local"
-    password: PASSWORD
+    username: "USERNAME@vsphere.local"
+    password: "PASSWORD"
   datacenter: "Datacenter"
   datastore: "ds1"
   cluster: "New Cluster"
@@ -15,7 +15,7 @@ vcenter:
   # Provide the name for the persistent disk to be used by the deployment (ending
   # in .vmdk). Any directory in the supplied path must be created before deployment.
   # Not required when adding additional user clusters
-  datadisk: "sg-test3"
+  datadisk: "test-deploy"
   # Provide the path to vCenter CA certificate pub key for SSL verification
   cacertpath: "/home/ubuntu/gke_admin_wrkst_private/vmware/vcenter.pem"
 # Specify the proxy configuration.
@@ -47,7 +47,7 @@ admincluster:
     credentials:
       address: "10.1.222.170"
       username: "admin"
-      password: PASSWORD
+      password: "PASSWORD"
     partition: "Spanned_VIP"
     # # Optionally specify a pool name if using SNAT
     # snatpoolname: ""
@@ -97,8 +97,8 @@ privateregistryconfig:
   # Do not include the scheme with your registry address
   credentials:
     address: "16.100.209.193:5005"
-    username: "svtbuild"
-    password: PASSWORD
+    username: "USERNAME"
+    password: "PASSWORD"
 #   # The absolute or relative path to the CA certificate for this registry
   cacertpath: "/home/ubuntu/gke_admin_wrkst_private/private_docker_reg/registry.pem"
 # The absolute or relative path to the GCP service account key that will be used to

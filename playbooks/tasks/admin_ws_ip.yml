@@ -2,6 +2,7 @@
 
 - name: Read gkeadm file from disk
   become: false
+  delegate_to: localhost
   vars:
     contents: "{{ lookup('file', '{{ output_directory }}/{{ adminWorkstation.name }}') }}"
     regexp: 'ubuntu@\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b'
