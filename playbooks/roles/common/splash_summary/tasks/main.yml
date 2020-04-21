@@ -4,7 +4,7 @@
 - name: Read gkeadm file from disk
   delegate_to: localhost
   vars:
-    contents: "{{ lookup('file', '{{ output_directory}}/{{ adminWorkstation.name }}') }}"
+    contents: "{{ lookup('file', '{{ output_directory}}/{{ gke_admin_workstation.name }}') }}"
   debug:
     msg: 
       - "Anthos Workstation Deployment Summary"

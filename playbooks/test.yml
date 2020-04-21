@@ -1,7 +1,0 @@
----
-- hosts: localhost
-  become: no
-  gather_facts: false
-
-  tasks:
-  - include_tasks: tasks/testoutput.yml

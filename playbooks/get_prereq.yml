@@ -3,8 +3,8 @@
   become: yes
   gather_facts: false
 
-  vars_files:
-    - "{{ gkeadm_config }}"
+  #vars_files:
+  #  - "{{ gkeadm_config }}"
 
   roles:
     - role: prereqs

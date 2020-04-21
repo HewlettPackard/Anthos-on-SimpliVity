@@ -4,11 +4,11 @@
 - name: Check if gke admin workstation exists
   become: false
   vmware_guest_info:
-    hostname: "{{ vCenter.credentials.address }}"
-    username: "{{ vCenter.credentials.username }}"
-    password: "{{ vCenter.credentials.password }}"
-    datacenter: "{{ vCenter.datacenter }}"
-    name: "{{ adminWorkstation.name }}"
+    hostname: "{{ vcenter.address }}"
+    username: "{{ vcenter.username }}"
+    password: "{{ vcenter.password }}"
+    datacenter: "{{ vcenter.datacenter }}"
+    name: "{{ gke_admin_workstation.name }}"
     validate_certs: no
   delegate_to: localhost
   register: admin_wrkst_info
@@ -27,6 +27,12 @@
     or admin_wrkst_info.failed
   failed_when: false
 
+- name: Create input file for gkeadm for creating GKE Admin workstation
+  delegate_to: localhost
+  template:
+    src: admin-ws-config.yaml.j2
+    dest: "{{ gkeadm_config }}"
+
 - name: Use Google gkeadm to deploy gke admin workstation
   become: false
   command: "{{ gkeadm_command }}"
@@ -35,31 +41,21 @@
     chdir: "{{ output_directory }}"
   delegate_to: localhost
   when: run_gkeadm is defined
-    
 
 - debug: 
     msg: "{{ gkeadm_output }}"
     verbosity: 2
 
-#- name: Pull IP from gkeadm
-#  set_fact:
-#    gke_adm_wrkst: "{{ gkeadm_output.stdout | regex_search(regexp, '\\1') }}"
-#  vars:
-#    regexp: 'ubuntu@\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b'
-#
-#- debug: 
-#    msg: " IP from stdout is {{ gke_adm_wrkst }}"
-
 - name: Output name of admin workstation
   debug:
-    msg: "{{ adminWorkstation.name }}"
+    msg: "{{ gke_admin_workstation.name }}"
     verbosity: 2 
 
 - name: Read gkeadm file from disk
   become: false
   delegate_to: localhost
   vars:
-    contents: "{{ lookup('file', '{{ output_directory }}/{{ adminWorkstation.name }}') }}"
+    contents: "{{ lookup('file', '{{ output_directory }}/{{ gke_admin_workstation.name }}') }}"
     regexp: 'ubuntu@\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b'
   set_fact:
     gke_adm_wrkst_ip_ff: "{{ contents | regex_search(regexp, '\\1') }}"
