@@ -2,9 +2,9 @@
 # tasks file for F5_partition_config
 - name: Create partition for admin cluster
   bigip_partition:
-    name: "{{ item.name }}"
+    name: "{{ item.f5_partition }}"
     state: "{{ item.state }}"
-    provider: "{{ provider }}"
+    provider: "{{ f5.provider }}"
   delegate_to: localhost
   with_items:
-    - "{{ f5_partitions }}"
+    - "{{ gke_cluster_config }}"

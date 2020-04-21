@@ -1,2 +1,0 @@
-# placeholder for Anthos GKE workstation host vars   
-ansible_python_interpreter: '/usr/bin/python3'

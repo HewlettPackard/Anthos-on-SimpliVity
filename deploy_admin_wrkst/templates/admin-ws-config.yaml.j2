@@ -1,0 +1,45 @@
+gcp:
+  # Path of the whitelisted service account's JSON key file
+  whitelistedServiceAccountKeyPath: "{{ gke_whitelisted_keypath }}"
+# Specify which vCenter resources to use
+vCenter:
+  # The credentials and address GKE On-Prem should use to connect to vCenter
+  credentials:
+    address: "{{ vcenter.address }}"
+    username: "{{ vault_vcenter_username }}"
+    password: "{{ vault_vcenter_password }}"
+  datacenter: "{{ vcenter.datacenter }}"
+  datastore: "{{ vcenter.datastore }}"
+  cluster: "{{ vcenter.cluster }}"
+  network: "{{ vcenter.network }}"
+  resourcePool: "{{ vcenter.resourcepool }}"
+  # Provide the path to vCenter CA certificate pub key for SSL verification
+  caCertPath: "{{ vcenter.cacertpath_gkeadm }}"
+# The URL of the proxy for the jump host
+proxyUrl: "{{ gke_admin_workstation.proxyUrl }}"
+adminWorkstation:
+  name: "{{ gke_admin_workstation.name }}"
+  cpus: {{ gke_admin_workstation.cpus }}
+  memoryMB: {{ gke_admin_workstation.memoryMB }}
+  # The disk size of the admin workstation in GB. It is recommended to use a disk
+  # with at least 50 GB to host images decompressed from the bundle.
+  diskGB: {{ gke_admin_workstation.diskGB }}
+  network:
+    # The IP allocation mode: 'dhcp' or 'static'
+    ipAllocationMode: "{{ gke_admin_workstation.ipAllocationMode }}"
+{% if gke_admin_workstation.ipAllocationMode == 'static' %}
+     # The host config in static IP mode. Do not include if using DHCP
+    hostConfig:
+      # The IPv4 static IP address for the admin workstation
+      ip: "{{ gke_admin_workstation.ip }}"
+      # The IP address of the default gateway of the subnet in which the admin workstation
+      # is to be created
+      gateway: "{{ gke_admin_workstation.gateway }}"
+      # The subnet mask of the network where you want to create your admin workstation
+      netmask: "{{ gke_admin_workstation.netmask }}"
+      # The list of DNS nameservers to be used by the admin workstation
+      dns: "{{ gke_admin_workstation.dns }}"
+{% endif %}}
+  # The URL of the proxy for the admin workstation
+  proxyUrl: "{{ gke_admin_workstation.proxyUrl }}"
+  ntpServer: "{{ gke_admin_workstation.ntpServer }}"

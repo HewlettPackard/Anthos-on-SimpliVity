@@ -1,0 +1,154 @@
+# Absolute path to a GKE bundle on disk
+bundlepath: "{{ gke_bundle_path }}"
+# Specify which vCenter resources to use for deployment
+vcenter:
+  # The credentials and address GKE should use to connect to vCenter
+  credentials:
+    address: "{{ vCenter.credentials.address }}"
+    username: "{{ vCenter.credentials.username }}"
+    password: "{{ vCenter.credentials.password }}"
+  datacenter: "{{ vCenter.datacenter }}"
+  datastore: "{{ vCenter.datastore }}"
+  cluster: "{{ vCenter.cluster }}"
+  network: "{{ gke_network_internal }}"
+  resourcepool: "{{ gke_cluster_resource_pool }}"
+  # Provide the name for the persistent disk to be used by the deployment (ending
+  # in .vmdk). Any directory in the supplied path must be created before deployment.
+  # Not required when adding additional user clusters
+  datadisk: "{{ gke_data_disk_name }}"
+  # Provide the path to vCenter CA certificate pub key for SSL verification
+  cacertpath: "{{ gke_cluster_vcenter_ssl_pub_key }}"
+# Specify the proxy configuration.
+proxy:
+  # The URL of the proxy
+  url: "{{ proxyUrl }}"
+  # The domains and IP addresses excluded from proxying
+  noproxy: "{{ no_proxy }}"
+#
+# Admin cluster defined in separate yaml file
+#
+usercluster:
+  # In-Cluster vCenter configuration
+  vcenter:
+    # If specified it overwrites the network field in global vcenter configuration
+    network: "{{ gke_user_cluster_network }}"
+  # # The absolute or relative path to the yaml file to use for static IP allocation.
+  # # Do not include if using DHCP
+  # ipblockfilepath: ""
+  # # Specify pre-defined nodeports if using "manual" load balancer mode
+  # manuallbspec:
+  #   ingresshttpnodeport: 30243
+  #   ingresshttpsnodeport: 30879
+  #   controlplanenodeport: 30562
+  #   addonsnodeport: 0
+  # Specify the already-existing partition and credentials to use with F5
+  bigip:
+    # To re-use credentials across clusters we recommend using YAML node anchors.
+    # See https://yaml.org/spec/1.2/spec.html#id2785586
+    credentials:
+      address: "{{ provider.server }}"
+      username: "{{ provider.user }}"
+      password: "{{ provider.password }}"
+    partition: "{{ item.f5_partition }}"
+    # # Optionally specify a pool name if using SNAT
+    # snatpoolname: ""
+  # The VIPs to use for load balancing
+  vips:
+    # Used to connect to the Kubernetes API
+    controlplanevip: "{{ gke_user_cluster_ctrl_vip }}" ##FIXME add to gke_cluster_config
+    # Shared by all services for ingress traffic
+    ingressvip: "{{ gke_user_cluster_ingress_vip }}" ##FIXME add to gke_cluster_config
+    # # Used for admin cluster addons (needed for multi cluster features). Must be the same
+    # # across clusters
+    # addonsvip: ""
+  # A unique name for this cluster
+  clustername: "{{ gke_user_cluster_name }}" ##FIXME add to gke_cluster_config
+  # User cluster master nodes must have either 1 or 3 replicas
+  masternode:
+    cpus: "{{ gke_user_cluster_masternode_cpu | default(4) }}"
+    memorymb: "{{ gke_user_cluster_masternode_memory | default(8192) }}"
+    # How many machines of this type to deploy
+    replicas: "{{ gke_user_cluster_masternode_replicas | default(1) }}"
+  # The number of worker nodes to deploy and their size. Min. 3 replicas
+  workernode:
+    cpus: "{{ gke_user_cluster_workernode_cpu | default(4) }}"
+    memorymb: "{{ gke_user_cluster_workernode_memory | default(8192) }}"
+    # How many machines of this type to deploy
+    replicas: "{{ gke_user_cluster_workernode_replicas | default(3) }}"
+  # The Kubernetes service CIDR range for the cluster
+  serviceiprange: 10.96.0.0/12
+  # The Kubernetes pod CIDR range for the cluster
+  podiprange: 192.168.0.0/16
+  # # Uncomment this section to use OIDC authentication
+  # oidc:
+  #   issuerurl: ""
+  #   kubectlredirecturl: ""
+  #   clientid: ""
+  #   clientsecret: ""
+  #   username: ""
+  #   usernameprefix: ""
+  #   group: ""
+  #   groupprefix: ""
+  #   scopes: ""
+  #   extraparams: ""
+  #   # Set value to string "true" or "false"
+  #   usehttpproxy: ""
+  #   # # The absolute or relative path to the CA file (optional)
+  #   # capath: ""
+  # # Optionally provide an additional serving certificate for the API server
+  # sni:
+  #   certpath: ""
+  #   keypath: ""
+  # # Specify whether or not to enable the GKE usage metering feature
+  # usagemetering:
+  #   bigqueryprojectid: ""
+  #   # The ID of the BigQuery Dataset in which the usage metering data will be stored
+  #   bigquerydatasetid: ""
+  #   # The absolute or relative path to the key file for a GCP service account used by
+  #   # gke-usage-metering to report to BigQuery
+  #   bigqueryserviceaccountkeypath: ""
+  #   # Whether or not to enable the consumption-based metering feature
+  #   enableconsumptionmetering: false
+# Which load balancer mode to use "Manual" or "Integrated"
+lbmode: Integrated
+# Specify which GCP project to connect your GKE clusters to
+gkeconnect:
+  projectid: "{{ gcloud_project }}"
+  # The absolute or relative path to the key file for a GCP service account used to
+  # register the cluster
+  registerserviceaccountkeypath: "{{ gke_register_sa_keypath }}"
+  # The absolute or relative path to the key file for a GCP service account used by
+  # the GKE connect agent
+  agentserviceaccountkeypath:  "{{ gke_agent_sa_keypath }}"
+# Specify which GCP project to connect your logs and metrics to
+stackdriver:
+  projectid: "{{ gcloud_project }}"
+  # A GCP region where you would like to store logs and metrics for this cluster.
+  clusterlocation: "{{ gke_cluster_location }}"
+  enablevpc: "{{ enable_vpc }}"
+  # The absolute or relative path to the key file for a GCP service account used to
+  # send logs and metrics from the cluster
+  serviceaccountkeypath: "{{ gke_stackdriver_sa_keypath }}"
+# Specify Cloud Run configuration
+cloudrun:
+  enabled: "{{ enable_cloudrun }}"
+# # Optionally use a private Docker registry to host GKE images
+# privateregistryconfig:
+#   # Do not include the scheme with your registry address
+#   credentials:
+#     address: ""
+#     username: ""
+#     password: ""
+#   # The absolute or relative path to the CA certificate for this registry
+#   cacertpath: ""
+# The absolute or relative path to the GCP service account key that will be used to
+# pull GKE images
+gcrkeypath: "{{ gcp.whitelistedServiceAccountKeyPath }}"
+# # Configure kubernetes apiserver audit logging
+cloudauditlogging:
+  projectid: "{{ gcloud_project }}"
+  # A GCP region where you would like to store audit logs for this cluster.
+  clusterlocation: "{{ gcp_region }}"
+  # The absolute or relative path to the key file for a GCP service account used to
+  # send audit logs from the cluster
+  serviceaccountkeypath: "{{ gke_auditlogging_sa_keypath }}"

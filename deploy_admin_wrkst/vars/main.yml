@@ -1,0 +1,16 @@
+---
+# vars file for anthos_deploy_admin_wrkst
+# Still working out which is best
+gkeadm_command: >
+  gkeadm create admin-workstation --config {{ gkeadm_config }} 
+  --ssh-key-path {{ ansible_ssh_private_key_file }} 
+  --os-image-file-path {{ gkeadm_ova_path }}
+
+gkeadm_osimage_path_command: >
+  gkeadm create admin-workstation --config {{ gkeadm_config }} 
+  --ssh-key-path {{ ansible_ssh_private_key_file }} 
+  --os-image-file-path {{ gkeadm_ova_path }}
+
+gkeadm_download_ova_command: >
+  gkeadm create admin-workstation --config {{ gkeadm_config }} 
+  --ssh-key-path {{ ansible_ssh_private_key_file }} 
