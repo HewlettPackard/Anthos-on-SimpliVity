@@ -4,7 +4,7 @@
   bigip_device_info:
     gather_subset:
       - devices
-    provider: "{{ provider }}"
+    provider: "{{ f5.provider }}"
   register: bigip_facts
   delegate_to: localhost
 
@@ -23,14 +23,14 @@
   bigip_provision:
     module: ltm
     level: nominal
-    provider: "{{ provider }}"
+    provider: "{{ f5.provider }}"
   delegate_to: localhost
 
 - name: Provision MGMT memory to large
   bigip_provision:
     module: mgmt
     memory: large
-    provider: "{{ provider }}"
+    provider: "{{ f5.provider }}"
   delegate_to: localhost
 
 - name: Adjust restjavad memory setting
@@ -38,7 +38,7 @@
     commands:
       - modify sys db restjavad.useextramb value true
       - bigstart restart restjavad
-    provider: "{{ provider }}"
+    provider: "{{ f5.provider }}"
   when: 
       - bigip_version is match("12")
   delegate_to: localhost
@@ -47,7 +47,7 @@
   bigip_command:
     commands:
       - list /sys db provision.tomcat.extramb
-    provider: "{{ provider }}"
+    provider: "{{ f5.provider }}"
   when: 
       - bigip_version is search("13.1")
   register: f5_tomcat_ram
@@ -82,7 +82,7 @@
     commands:
       - modify /sys db provision.tomcat.extramb value 20
       - restart /sys service tomcat
-    provider: "{{ provider }}"
+    provider: "{{ f5.provider }}"
   when: 
       - bigip_version is search("13.1")
       - f5_tomcat_ram_value != "20"

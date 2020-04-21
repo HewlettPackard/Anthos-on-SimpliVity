@@ -53,69 +53,12 @@ ex.   ansible-setup.sh -b /home/sgifford/virtualenvs -d ansible29
 
 ## Variables Needed
 
-### gkeadm Variables
+### GKE Admin Workstation
 
-`gkeadm` requires a yaml file defining the parameters for the admin workstation. To initialize the file:
+`gkeadm` requires a yaml file for deploying the admin workstation.  The ansible code
+will generate this file based on the inputs provided in `inventory/group_vars/all/all.yml`
 
-* Run `gkeadm create config` to accept the default filename (admin-ws-config.yaml) and path (current dir).
-* Run `gkeadm create config --config 'path/filename.yaml'` to specifiy custom path and filename.
-
-This file will contain potentially sensitive information (login credentials) and should be located in a secure directory.
-
-The location of the file will need to be entered in `inventory/group_vars/all/all.yml` under the `gkeadm_config:` variable.
-
-The resulting yaml file will look similar to this but all fields will be empty.  You can also use an existing file and edit as needed.
-
-These can be customized by editing the file `docs/sample-admin-ws-config.yml` and moving it to a secure directory. see sample below.
-
-```yaml
-gcp:
-  # Path of the whitelisted service account's JSON key file
-  whitelistedServiceAccountKeyPath: "/home/sgifford/gke_admin_wrkst_private/gkeonprem-keys/whitelisted-key.json"
-# Specify which vCenter resources to use
-vCenter:
-  # The credentials and address GKE On-Prem should use to connect to vCenter
-  credentials:
-    address: "VCENTER_IP"
-    username: "Administrator@vsphere.local"
-    password: "PASSWORD"
-  datacenter: "Datacenter"
-  datastore: "ds1"
-  cluster: "New Cluster"
-  network: "VM Network 2"
-  resourcePool: "New Cluster/Resources/"
-  # Provide the path to vCenter CA certificate pub key for SSL verification
-  caCertPath: "/home/sgifford/gke_admin_wrkst_private/vmware/vcenter.pem"
-# The URL of the proxy for the jump host
-proxyUrl: "http://16.100.208.216:8888"
-adminWorkstation:
-  name: gke-adm-ws13.0-200326-102803
-  cpus: 4
-  memoryMB: 8192
-  # The disk size of the admin workstation in GB. It is recommended to use a disk
-  # with at least 50 GB to host images decompressed from the bundle.
-  diskGB: 50
-  network:
-    # The IP allocation mode: 'dhcp' or 'static'
-    ipAllocationMode: "dhcp"
-    # # The host config in static IP mode. Do not include if using DHCP
-    # hostConfig:
-    #   # The IPv4 static IP address for the admin workstation
-    #   ip: ""
-    #   # The IP address of the default gateway of the subnet in which the admin workstation
-    #   # is to be created
-    #   gateway: ""
-    #   # The subnet mask of the network where you want to create your admin workstation
-    #   netmask: ""
-    #   # The list of DNS nameservers to be used by the admin workstation
-    #   dns:
-    #   - ""
-  # The URL of the proxy for the admin workstation
-  proxyUrl: "http://16.100.208.216:8888"
-  ntpServer: hou-ntp1.hcilabs.hpecorp.net
-  ```
-
-### Post Deploy Customization Vars
+### Post Deploy Configuration
 
 There are playbooks that allow for additional customization of the gke admin workstation.
 
@@ -136,7 +79,6 @@ gkeadm_ova_path: '/home/sgifford/Downloads/1.3.0-gke.16/gke-on-prem-admin-applia
 docker_bip: '192.68.0.1/16'
 
 # A private Docker registry is commonly used in Air-Gapped installations
-# FIXME: Note ssl cert for this registry is currently held in ansible role directory
 private_docker_registry: true
 private_reg_ip: '16.100.209.193'
 private_reg_port: '5005'
@@ -162,7 +104,7 @@ ansible_ssh_private_key_file: '/home/sgifford/gke_admin_wrkst_private/dot-cfg-fi
 
 # Path to repos to pull after deployment. Do not change anthos_deploy_git, but update the anthos_userdata_git entry.
 anthos_deploy_git:
-  repo_name: anthos_workstation_files
+  repo_name: anthos_wrkstation_files
   repo_url: 'ssh://git@stash.simplivt.local:7999/soleng/anthos_wrkstation_files.git'
 anthos_userdata_git:
   repo_name: gke_admin_wrkst_private
@@ -172,13 +114,19 @@ anthos_userdata_git:
 
 ---
 
-## Anthos GKE on-prem config files
+### Anthos GKE on-prem cluster configuration
 
-Sample yaml config files needed to deploy gke on-prem clusters are located in `docs` directory. The actual files needed will contain sensitive information and should be kept separately. (In a secure git repo or ...) The paths to the files should be entered into the `inventory/group_vars/all/all.yml` file under the `gke_cluster_config:` variable.
+Similar to the GKE Admin Workstation configuration, the GKE on-prem cluster configuration is defined through variables in the `inventory/group_vars/all/all.yml` file.
 
 ---
 
-## Protected Passwords/Keys for F5 Configuration
+### F5 Configuration
+
+The F5 configuration is defined through variables in the `inventory/group_vars/all/all.yml` file.
+
+---
+
+### Protected Passwords/Keys for vSphere and F5 Configuration
 
 The file `inventory/group_vars/all/vault.yml` contains the following variables used for the F5 playbook:
 
@@ -186,9 +134,11 @@ The file `inventory/group_vars/all/vault.yml` contains the following variables u
 vault_f5_root_password: "password"
 vault_f5_admin_password: "password"
 vault_f5_license_key: "license_key"
+vault_vcenter_username: "username"
+vault_vcenter_password: "password"
 ```
 
-These need to entered before running the bigip_anthos.yml playbook.  To edit the file:
+These need to entered before running the site.yml playbook.  To edit the file:
 
 * source your python virtualenv
 * run `ansible-vault edit inventory/group_vars/all/vault.yml`
@@ -219,12 +169,24 @@ create_admin_cluster: true
 create_user_cluster: true
 enable_config_check: false
 gke_cluster_config:
-    - name: 'admin-config.yaml'
-      local_path: '/home/sgifford/gke_admin_wrkst_private/gkeonprem-config/admin-config.yaml'
-    - name: 'user1-config.yaml'
-      local_path: '/home/sgifford/gke_admin_wrkst_private/gkeonprem-config/user1-config.yaml'
-    - name: 'user2-config.yaml'
-      local_path: '/home/sgifford/gke_admin_wrkst_private/gkeonprem-config/user2-config.yaml'
+    - name: 'admin'
+      type: 'admin'
+      f5_partition: 'Spanned_VIP'
+      state: present
+      cluster_ctrl_vip: '172.17.0.21'
+      cluster_ingress_vip: '172.17.0.22'
+    - name: 'sg-test4-13'
+      type: 'user'
+      f5_partition: 'Spanned_VIP_user'
+      cluster_ctrl_vip: '172.17.0.69'
+      cluster_ingress_vip: '172.17.0.72'
+      state: present
+    - name: 'sg-test5-13'
+      type: 'user'
+      f5_partition: 'user2_VIP'
+      cluster_ctrl_vip: '172.17.0.32'
+      cluster_ingress_vip: '172.17.0.33'
+      state: present
 ```
 
 ---
