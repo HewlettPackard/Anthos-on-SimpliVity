@@ -5,8 +5,8 @@
   collections:
    - f5networks.f5_modules
 
-#  vars_files:
-#    - "{{ gkeadm_config }}"
+  vars_files:
+    - "{{ gkeadm_config }}"
 
   roles:
     - role: f5_loadbalancer/f5_host_config
@@ -17,4 +17,4 @@
 
   tasks:
     - include_tasks: tasks/f5_save_configuration.yml
-      when: f5.save
+      when: f5_save

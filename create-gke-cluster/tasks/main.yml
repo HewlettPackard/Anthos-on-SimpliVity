@@ -1,6 +1,0 @@
----
-# tasks file for create-gke-cluster
-
-# If admin cluster, then create admin
-
-# If user cluster, then create user(s)

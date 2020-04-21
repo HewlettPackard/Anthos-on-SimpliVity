@@ -3,5 +3,5 @@
   bigip_config:
     reset: yes
     save: yes
-    provider: "{{ f5.provider }}"
+    provider: "{{ provider }}"
   delegate_to: localhost

@@ -1,8 +1,8 @@
 [local]
-localhost ansible_connection=local ansible_python_interpreter="{{ ansible_playbook_python }}"
+localhost
 
 [anthos_admin]
-gke-admin-ws ansible_python_interpreter='/usr/bin/python3'
+gke-admin-ws
 
 [f5]
-my-f5 ansible_python_interpreter='/usr/bin/python3'
+my-f5

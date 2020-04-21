@@ -13,15 +13,15 @@
 - name: Clear env if proxyUrl is not defined
   set_fact:
     env: {}
-  when: gke_admin_workstation.proxyUrl is not defined
+  when: proxyUrl is not defined
 
 - name: Set env if proxyUrl is defined
   set_fact:
     env:
-      http_proxy: "{{ gke_admin_workstation.proxyUrl }}"
-      https_proxy: "{{ gke_admin_workstation.proxyUrl }}"
+      http_proxy: "{{ proxyUrl }}"
+      https_proxy: "{{ proxyUrl }}"
       no_proxy: "{{ no_proxy }}"
-  when: gke_admin_workstation.proxyUrl is defined
+  when: proxyUrl is defined
 
 - name: Install Google repo file
   vars:
@@ -65,7 +65,7 @@
 - name: Activate GCP whitelisted key
   become: false
   command: |
-    gcloud auth activate-service-account --project {{ gcloud_project }} --key-file {{ gke_whitelisted_keypath }}
+    gcloud auth activate-service-account --project {{ gcloud_project }} --key-file {{ gcp.whitelistedServiceAccountKeyPath }}
 
 - name: Check for existance of gkeadm binary locally
   stat:

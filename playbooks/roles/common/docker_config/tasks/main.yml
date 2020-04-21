@@ -2,7 +2,7 @@
 # tasks file for anthos_admin_docker_config
 
 # Configure anthos admin workstation for private docker registry
-- name: Copy private docker registry cert to "{{ inventory_hostname }}"
+- name: Copy private docker registry cert to host
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -10,8 +10,8 @@
     group: root
     mode: 0644
   with_items:
-    - { src: '{{ private_reg_cert_path_gkeadm }}', dest: '/etc/docker/certs.d/{{ private_reg_ip }}:{{ private_reg_port }}/'}
-    - { src: '{{ private_reg_cert_path_gkeadm }}', dest: '/usr/local/share/ca-certificates/registry.crt'}
+    - { src: '{{ private_reg_cert_path }}', dest: '/etc/docker/certs.d/{{ private_reg_ip }}:{{ private_reg_port }}/'}
+    - { src: '{{ private_reg_cert_path }}', dest: '/usr/local/share/ca-certificates/registry.crt'}
   when: private_docker_registry
 
 # update the system ca certs for private docker registry

@@ -2,15 +2,15 @@
 # tasks file for F5_host_config
 - name: Set hostname of BIG-IP
   bigip_hostname:
-    hostname: "{{ f5.hostname }}"
-    provider: "{{ f5.provider }}"
+    hostname: "{{ f5_hostname }}"
+    provider: "{{ provider }}"
   delegate_to: localhost
 
 - name: Set new admin password
   bigip_user:
     state: present
-    username_credential: "{{ f5.admin_username }}"
-    password_credential: "{{ f5.admin_password }}"
-    provider: "{{ f5.provider }}"
+    username_credential: "{{ admin_username }}"
+    password_credential: "{{ admin_password }}"
+    provider: "{{ provider }}"
     update_password: always
   delegate_to: localhost

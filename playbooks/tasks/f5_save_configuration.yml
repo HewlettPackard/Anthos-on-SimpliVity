@@ -2,6 +2,6 @@
 - name: Save the running configuration of the BIG-IP
   bigip_config:
     save: yes
-    provider: "{{ f5.provider }}"
+    provider: "{{ provider }}"
   delegate_to: localhost
   check_mode: no
