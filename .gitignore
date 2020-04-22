@@ -8,3 +8,5 @@ ansible/admin-ws-config.yaml
 ansible/playbooks/logs/*
 logs/*
 logs/gkeadm.INFO
+inventory/group_vars/all/myvault.yml
+inventory/group_vars/all/vault.yml
