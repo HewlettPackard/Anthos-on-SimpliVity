@@ -146,9 +146,10 @@ vault_vcenter_password: "password"
 These need to entered before running the site.yml playbook.  To edit the file:
 
 * source your python virtualenv
-* run `ansible-vault edit inventory/group_vars/all/vault.yml`
-* type in the password when prompted (will provide password separately)
+* run `ansible-vault edit inventory/group_vars/all/vault.yml --ask-vault-pass`
+* type in the password when prompted (default password is `password`)
 * edit/save file
+* run `ansible-vault rekey inventory/group_vars/all/vault.yml --ask-vault-pass` and follow the prompts to change the password
 
 When running ansible-playbook, you will need to specify `--ask-vault-pass` on command line.
 
