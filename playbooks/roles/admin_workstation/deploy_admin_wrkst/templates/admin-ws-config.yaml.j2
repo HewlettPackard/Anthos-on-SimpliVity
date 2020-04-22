@@ -39,7 +39,7 @@ adminWorkstation:
       netmask: "{{ gke_admin_workstation.netmask }}"
       # The list of DNS nameservers to be used by the admin workstation
       dns: "{{ gke_admin_workstation.dns }}"
-{% endif %}}
+{% endif %}
   # The URL of the proxy for the admin workstation
   proxyUrl: "{{ gke_admin_workstation.proxyUrl }}"
   ntpServer: "{{ gke_admin_workstation.ntpServer }}"
