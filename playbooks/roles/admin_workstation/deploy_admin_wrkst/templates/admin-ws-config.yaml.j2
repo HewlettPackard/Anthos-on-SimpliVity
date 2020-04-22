@@ -38,7 +38,7 @@ adminWorkstation:
       # The subnet mask of the network where you want to create your admin workstation
       netmask: "{{ gke_admin_workstation.netmask }}"
       # The list of DNS nameservers to be used by the admin workstation
-      dns: "{{ gke_admin_workstation.dns }}"
+      dns: {{ gke_admin_workstation.dns }}
 {% endif %}
   # The URL of the proxy for the admin workstation
   proxyUrl: "{{ gke_admin_workstation.proxyUrl }}"
