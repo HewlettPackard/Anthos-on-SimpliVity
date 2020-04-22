@@ -54,13 +54,28 @@
     update_cache: yes
   environment: "{{ env }}"
 
-- name: Configure gcloud
+- name: Configure gcloud project and proxy
   become: false
   shell: |
     gcloud config set project "{{ gcloud_project }}"
     gcloud config set proxy/type "{{ proxy_type }}"
     gcloud config set proxy/address "{{ proxy_address }}"
     gcloud config set proxy/port "{{ proxy_port }}"
+
+- name: Configure gcloud required apis
+  become: false
+  command: >
+    gcloud services enable
+      anthos.googleapis.com 
+      anthosgke.googleapis.com 
+      cloudresourcemanager.googleapis.com 
+      container.googleapis.com 
+      gkeconnect.googleapis.com 
+      gkehub.googleapis.com 
+      serviceusage.googleapis.com 
+      stackdriver.googleapis.com 
+      monitoring.googleapis.com 
+      logging.googleapis.com
 
 - name: Activate GCP whitelisted key
   become: false
