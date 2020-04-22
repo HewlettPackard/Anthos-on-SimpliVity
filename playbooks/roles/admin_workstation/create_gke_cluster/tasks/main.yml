@@ -1,6 +1,6 @@
 ---
 - name: Get the IP for the current admin WS
-  include_tasks: tasks/admin_ws_ip.yml
+  import_tasks: tasks/admin_ws_ip.yml
 
 - name: create directory on admin WS to hold configurations
   become: false
