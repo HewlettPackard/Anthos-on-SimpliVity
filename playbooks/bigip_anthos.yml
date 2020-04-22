@@ -5,9 +5,6 @@
   collections:
    - f5networks.f5_modules
 
-#  vars_files:
-#    - "{{ gkeadm_config }}"
-
   roles:
     - role: f5_loadbalancer/f5_host_config
     - role: f5_loadbalancer/f5_license_config
