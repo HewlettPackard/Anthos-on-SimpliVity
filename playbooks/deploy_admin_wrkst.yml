@@ -5,6 +5,7 @@
 
   roles:
     - role: admin_workstation/deploy_admin_wrkst
+      delegate_to: localhost
     - role: common/docker_config
     - role: common/apt_proxy
     - role: admin_workstation/admin_host_config
