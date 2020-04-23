@@ -28,6 +28,14 @@
   with_items: "{{ gke_cluster_config }}"
   when: "'user' in item.type"
 
+- name: Copy cluster IP configuration files to admin WS
+  become: false
+  template:
+    src: static-ip.yaml.j2
+    dest: "{{ cluster_configurations_path }}/{{ item.name }}-ip.yaml"
+  with_items: "{{ gke_cluster_config }}"
+  when: "'static' in item.gkenode_net.mode"
+
 - name: Initialize vSphere Environment for Anthos GKE on-prem
   become: false
   command: >

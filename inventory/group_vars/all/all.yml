@@ -154,18 +154,87 @@ gke_cluster_config:
       state: present
       cluster_ctrl_vip: '172.17.0.21'
       cluster_ingress_vip: '172.17.0.22'
+      gkenode_net:
+        mode: 'dhcp'
+        dns: '192.168.1.1'
+        gateway: '192.168.1.1'
+        netmask: '255.255.255.0'
+        tod: 'hou-ntp1.hcilabs.hpecorp.net'
+        search_domain: 'my.local.com'
+        otherdns:
+          - 8.8.8.8
+          - 8.8.8.4
+        othertod:
+          - ntp.ubuntu.com
+        ips:
+         - ip: 192.168.1.10
+           hostname: admin-host1
+         - ip: 192.168.1.11
+           hostname: admin-host2
+         - ip: 192.168.1.12
+           hostname: admin-host3
+         - ip: 192.168.1.13
+           hostname: admin-host4
+         - ip: 192.168.1.14
+           hostname: admin-host5
     - name: 'sg-test4-13'
       type: 'user'
       f5_partition: 'Spanned_VIP_user'
       cluster_ctrl_vip: '172.17.0.69'
       cluster_ingress_vip: '172.17.0.72'
       state: present
+      gkenode_net:
+        mode: 'dhcp'
+        dns: '192.168.2.1'
+        gateway: '192.168.2.1'
+        netmask: '255.255.255.0'
+        tod: 'hou-ntp1.hcilabs.hpecorp.net'
+        search_domain: 'my.local.com'
+        otherdns:
+          - 8.8.8.8
+          - 8.8.8.4
+        othertod:
+          - ntp.ubuntu.com
+        ips:
+         - ip: 192.168.2.10
+           hostname: sg-test4-host1
+         - ip: 192.168.2.11
+           hostname: sg-test4-host2
+         - ip: 192.168.2.12
+           hostname: sg-test4-host3
+         - ip: 192.168.2.13
+           hostname: sg-test4-host4
+         - ip: 192.168.2.14
+           hostname: sg-test4-host5
     - name: 'sg-test5-13'
       type: 'user'
       f5_partition: 'user2_VIP'
       cluster_ctrl_vip: '172.17.0.32'
       cluster_ingress_vip: '172.17.0.33'
       state: present
+      gkenode_net:
+        mode: 'dhcp'
+        dns: '192.168.3.1'
+        gateway: '192.168.3.1'
+        netmask: '255.255.255.0'
+        tod: 'hou-ntp1.hcilabs.hpecorp.net'
+        search_domain: 'my.local.com'
+        otherdns:
+          - 8.8.8.8
+          - 8.8.8.4
+        othertod:
+          - ntp.ubuntu.com
+        ips:
+         - ip: 192.168.3.10
+           hostname: sg-test5-host1
+         - ip: 192.168.3.11
+           hostname: sg-test5-host2
+         - ip: 192.168.3.12
+           hostname: sg-test5-host3
+         - ip: 192.168.3.13
+           hostname: sg-test5-host4
+         - ip: 192.168.3.14
+           hostname: sg-test5-host5
 
 #
 # F5 Configuration Information
@@ -200,3 +269,4 @@ f5:
   license: 
     - { key: "{{ vault_f5_license_key }}", state: present }
   
+
