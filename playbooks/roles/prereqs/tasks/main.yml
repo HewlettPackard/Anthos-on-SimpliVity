@@ -38,6 +38,7 @@
     ansible_python_interpreter: "{{ role_python }}"
   yum_repository:
       name: Google Cloud SDK
+      description: Googles Repository
       enabled: yes
       file: google-cloud-sdk
       repo_gpgcheck: yes
