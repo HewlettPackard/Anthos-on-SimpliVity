@@ -17,6 +17,8 @@ This repository of ansible code will perform the following steps from a linux ho
 
 A Linux host is required for running these Ansible playbooks.  This environment has been tested with Ubuntu 18.04 LTS and Fedora 31. The host must be able to communicate to the target vcenter and subsequent gke admin host that is created.
 
+The user account used to execute the ansible playbooks requires sudo with NOPASSWD to be enabled.  This can be done by adding the user to the ***wheel*** group and adding a line similar to this `%wheel ALL=NOPASSWD: ALL` to the sudoers configuration.
+
 A Google Cloud account is required and service accounts created.
 
 [Google site for getting started](https://cloud.google.com/anthos/gke/docs/on-prem/how-to/install-overview-basic)
@@ -58,6 +60,7 @@ ex.   ansible-setup.sh -b /home/sgifford/virtualenvs -d ansible29
 
 # Virtual Center Configuration that will be used to deploy GKE Admin Workstation
 # and all GKE on-prem clusters (admin and user)
+# All varibles that contain a vault_ prefix should be entered in `inventory/group_vars/all/vault.yml'
 #
 vcenter:
   address: '10.1.223.196'
@@ -231,7 +234,7 @@ remote_secrets_path: '/home/{{ ansible_user }}/gke_admin_wrkst_private'
 local_secrets_path: "/home/{{ lookup ('env', 'USER') }}/gke_admin_wrkst_private"'
 ```
 
-These secrets are used in the follwing variable:
+These secrets are used in the following variable:
 
 * secrets_path: "{{ remote_secrets_path }}"
 * cacertpath_gkeadm: "{{ local_secrets_path }}/vmware/vcenter.pem"
@@ -241,6 +244,8 @@ These secrets are used in the follwing variable:
 * private_reg_cert_path_gkeadm: '{{ local_secrets_path }}/private_docker_reg/registry.crt'
 * private_reg_cert_path_gkectl: '{{ remote_secrets_path }}/private_docker_reg/registry.crt'
 * ssh_config_path: '{{ local_secrets_path }}/dot-cfg-files/.ssh'
+
+Note that you can create additional directory structure under the secrets_path to organize the files.
 
 ---
 
