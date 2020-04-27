@@ -56,7 +56,7 @@
   retries: 2
   delay: 2
 
-- name: Create Anthos GKE on-prem Admin Cluster Configuration
+- name: Create Anthos GKE on-prem Admin Cluster 
   become: false
   command: >
     gkectl create cluster --config {{ cluster_configurations_path }}/{{ item.name }}.yaml
@@ -93,8 +93,8 @@
     and create_user_cluster
     and 'user' in item.type
   loop: "{{ gke_cluster_config }}"
-  until: gke_user_cluster_check | succeeded 
-  ignore_errors: yes
+  #until: gke_user_cluster_check | succeeded 
+  #ignore_errors: yes
   retries: 2
   delay: 1
 
@@ -111,8 +111,8 @@
     create_user_cluster
     and 'user' in item.type
   loop: "{{ gke_cluster_config }}"
-  until: gke_user_cluster_create | succeeded 
-  ignore_errors: yes
+  #until: gke_user_cluster_create | succeeded 
+  #ignore_errors: yes
   retries: 2
   delay: 2
   failed_when: gke_user_cluster_create.rc != 0
