@@ -34,10 +34,12 @@
     --log_file ./logs/cluster-{{ item.name }}-prepare.log 
     {{ gkectl_prepare_flags }}
   delegate_to: gke-admin-ws
+  register: gke_admin_cluster_prepare
   when: > 
      gkectl_run_prepare
      and 'admin' in item.type
   loop: "{{ gke_cluster_config }}"
+  until: gke_admin_cluster_prepare.rc == 0
   retries: 2
   delay: 2
 
@@ -48,11 +50,13 @@
     --log_file ./logs/cluster-{{ item.name }}-checkconfig.log 
     {{ gkectl_check_flags }}
   delegate_to: gke-admin-ws
+  register: gke_admin_cluster_check
   when: > 
      enable_config_check
      and create_admin_cluster
      and 'admin' in item.type
   loop: "{{ gke_cluster_config }}"
+  until: gke_admin_cluster_check.rc == 0
   retries: 2
   delay: 2
 
@@ -69,15 +73,20 @@
     create_admin_cluster
     and 'admin' in item.type
   loop: "{{ gke_cluster_config }}"
+  until: gke_admin_cluster_create.rc == 0
   retries: 2
   delay: 2
-  failed_when: gke_admin_cluster_create.rc != 0
 
 - name: Output Admin Cluster Create Status
   debug:
     msg: 
       - "{{ gke_admin_cluster_create | json_query('results[].stdout_lines') }}"
   when: create_admin_cluster
+
+- name: Output Admin Cluster Create Status FULL
+  debug:
+    msg: "{{ gke_admin_cluster_create }}" 
+    verbosity: 3
 
 - name: Check Anthos GKE on-prem User Cluster Configuration
   become: false
@@ -93,10 +102,9 @@
     and create_user_cluster
     and 'user' in item.type
   loop: "{{ gke_cluster_config }}"
-  #until: gke_user_cluster_check | succeeded 
-  #ignore_errors: yes
+  until: gke_user_cluster_check.rc == 0 
   retries: 2
-  delay: 1
+  delay: 2
 
 - name: Create Anthos GKE on-prem User Cluster
   become: false
@@ -111,11 +119,9 @@
     create_user_cluster
     and 'user' in item.type
   loop: "{{ gke_cluster_config }}"
-  #until: gke_user_cluster_create | succeeded 
-  #ignore_errors: yes
+  until: gke_user_cluster_create.rc == 0 
   retries: 2
   delay: 2
-  failed_when: gke_user_cluster_create.rc != 0
 
 - name: Output Cluster Create Status FULL
   debug:
