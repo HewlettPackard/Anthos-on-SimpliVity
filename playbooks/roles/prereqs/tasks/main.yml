@@ -37,7 +37,7 @@
   vars:
     ansible_python_interpreter: "{{ role_python }}"
   yum_repository:
-      name: Google Cloud SDK
+      name: Google-Cloud-SDK
       description: Googles Repository
       enabled: yes
       file: google-cloud-sdk
@@ -94,6 +94,11 @@
     gcloud config set proxy/address "{{ proxy_address }}"
     gcloud config set proxy/port "{{ proxy_port }}"
 
+- name: Activate GCP whitelisted key
+  become: false
+  command: |
+    gcloud auth activate-service-account --project {{ gcloud_project }} --key-file {{ gke_whitelisted_keypath }}
+
 - name: Configure gcloud required apis
   become: false
   command: >
@@ -108,11 +113,6 @@
       stackdriver.googleapis.com 
       monitoring.googleapis.com 
       logging.googleapis.com
-
-- name: Activate GCP whitelisted key
-  become: false
-  command: |
-    gcloud auth activate-service-account --project {{ gcloud_project }} --key-file {{ gke_whitelisted_keypath }}
 
 - name: Check for existance of gkeadm binary locally
   stat:
