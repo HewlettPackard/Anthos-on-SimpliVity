@@ -47,15 +47,15 @@ gke_admin_workstation:
   #  - nameserver_ip
   #  - nameserver_ip
 
-# Path to gke admin workstation ova file to install. If defined and valid gkeadm will use this file.
-# If empty '' or invalid gkeadm will download the file.
+# Path to GKE Admin Workstation OVA file to install. If defined and valid gkeadm will use this file.
+# If empty '' or invalid gkeadm will download the OVA into the directory defined by the variable 'output_directory:'
 # gkeadm_ova_path: '/home/sgifford/Downloads/1.3.0-gke.16/gke-on-prem-admin-appliance-vsphere-1.3.0-gke.16.ova'
 gkeadm_ova_path: ''
 
 # Path/Filename where ansible should create the yaml config file for deploying the GKE Admin Workstation
 gkeadm_config: '{{ local_secrets_path }}/admin-ws-configtest.yaml'
 
-# Path to ssh private key to install on admin workstation
+# Path to ssh private key to install on GKE Admin Workstation
 # This key will also be used by ansible to connect to admin workstation
 ansible_ssh_private_key_file: '{{ local_secrets_path }}/dot-cfg-files/.ssh/vsphere_workstation'
 
