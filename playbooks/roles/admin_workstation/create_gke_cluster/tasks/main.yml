@@ -1,6 +1,6 @@
 ---
 - name: Get the IP for the current admin WS
-  include_tasks: tasks/admin_ws_ip.yml
+  import_tasks: tasks/admin_ws_ip.yml
 
 - name: create directory on admin WS to hold configurations
   become: false
@@ -12,33 +12,36 @@
     - "{{ cluster_kubeconfig_path }}"
     - "{{ log_directory }}"
 
-- name: Copy ADMIN cluster configuration files to admin WS
+- name: Copy cluster configuration files to admin WS
   become: false
   template:
-    src: admin-cluster-config.yaml.j2
+    src: "{{ item.type }}-cluster-config.yaml.j2"
     dest: "{{ cluster_configurations_path }}/{{ item.name }}.yaml"
   with_items: "{{ gke_cluster_config }}"
-  when: "'admin' in item.type"
 
-- name: Copy USER cluster configuration files to admin WS
+- name: Copy cluster IP configuration files to admin WS
   become: false
   template:
-    src: user-cluster-config.yaml.j2
-    dest: "{{ cluster_configurations_path }}/{{ item.name }}.yaml"
+    src: static-ip.yaml.j2
+    dest: "{{ cluster_configurations_path }}/{{ item.name }}-ip.yaml"
   with_items: "{{ gke_cluster_config }}"
-  when: "'user' in item.type"
+  when: "'static' in item.gkenode_net.mode"
 
-- name: Initialize vSphere Environment for Anthos GKE on-prem
+- name: Running gkectl prepare to initialize vSphere Environment for Anthos GKE on-prem
   become: false
   command: >
     gkectl prepare --config {{ cluster_configurations_path }}/{{ item.name }}.yaml
     --log_file ./logs/cluster-{{ item.name }}-prepare.log 
     {{ gkectl_prepare_flags }}
   delegate_to: gke-admin-ws
+  register: gke_admin_cluster_prepare
   when: > 
      gkectl_run_prepare
      and 'admin' in item.type
   loop: "{{ gke_cluster_config }}"
+  until: gke_admin_cluster_prepare.rc == 0
+  retries: 2
+  delay: 2
 
 - name: Check Anthos GKE on-prem Admin Cluster Configuration
   become: false
@@ -47,13 +50,17 @@
     --log_file ./logs/cluster-{{ item.name }}-checkconfig.log 
     {{ gkectl_check_flags }}
   delegate_to: gke-admin-ws
+  register: gke_admin_cluster_check
   when: > 
      enable_config_check
      and create_admin_cluster
      and 'admin' in item.type
   loop: "{{ gke_cluster_config }}"
+  until: gke_admin_cluster_check.rc == 0
+  retries: 2
+  delay: 2
 
-- name: Create Anthos GKE on-prem Admin Cluster Configuration
+- name: Create Anthos GKE on-prem Admin Cluster 
   become: false
   command: >
     gkectl create cluster --config {{ cluster_configurations_path }}/{{ item.name }}.yaml
@@ -66,13 +73,20 @@
     create_admin_cluster
     and 'admin' in item.type
   loop: "{{ gke_cluster_config }}"
-  failed_when: gke_admin_cluster_create.rc != 0
+  until: gke_admin_cluster_create.rc == 0
+  retries: 2
+  delay: 2
 
 - name: Output Admin Cluster Create Status
   debug:
     msg: 
       - "{{ gke_admin_cluster_create | json_query('results[].stdout_lines') }}"
   when: create_admin_cluster
+
+- name: Output Admin Cluster Create Status FULL
+  debug:
+    msg: "{{ gke_admin_cluster_create }}" 
+    verbosity: 3
 
 - name: Check Anthos GKE on-prem User Cluster Configuration
   become: false
@@ -81,12 +95,16 @@
     --config {{ cluster_configurations_path }}/{{ item.name }}.yaml
     --log_file ./logs/user-cluster-{{ item.name.split('.')[0] }}-checkconfig.log 
     {{ gkectl_check_flags }}
+  register: gke_user_cluster_check
   delegate_to: gke-admin-ws
   when: > 
     enable_config_check
     and create_user_cluster
     and 'user' in item.type
   loop: "{{ gke_cluster_config }}"
+  until: gke_user_cluster_check.rc == 0 
+  retries: 2
+  delay: 2
 
 - name: Create Anthos GKE on-prem User Cluster
   become: false
@@ -101,7 +119,9 @@
     create_user_cluster
     and 'user' in item.type
   loop: "{{ gke_cluster_config }}"
-  failed_when: gke_user_cluster_create.rc != 0
+  until: gke_user_cluster_create.rc == 0 
+  retries: 2
+  delay: 2
 
 - name: Output Cluster Create Status FULL
   debug:

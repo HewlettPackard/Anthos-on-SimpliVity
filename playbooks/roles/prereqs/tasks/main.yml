@@ -23,7 +23,7 @@
       no_proxy: "{{ no_proxy }}"
   when: gke_admin_workstation.proxyUrl is defined
 
-- name: Install Google repo file
+- name: Install Google repo file for Debian
   vars:
     ansible_python_interpreter: "{{ role_python }}"
   apt_repository:
@@ -31,8 +31,27 @@
     state: present
     update_cache: no
     filename: google-cloud-sdk
+  when: ansible_os_family == 'Debian'
 
-- name: Install Google repository key
+- name: Install Google repo file for RedHat
+  vars:
+    ansible_python_interpreter: "{{ role_python }}"
+  yum_repository:
+      name: Google-Cloud-SDK
+      description: Googles Repository
+      enabled: yes
+      file: google-cloud-sdk
+      repo_gpgcheck: yes
+      gpgkey:
+        - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+        - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      state: present
+      gpgcheck: yes
+      baseurl: https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64
+  environment: "{{ env }}"
+  when: ansible_os_family == 'RedHat'
+
+- name: Install Google repository key for Debian
   vars:
     ansible_python_interpreter: "{{ role_python }}"
   apt_key:
@@ -40,8 +59,9 @@
     state: present
     keyring: /usr/share/keyrings/cloud.google.gpg
   environment: "{{ env }}"
+  when: ansible_os_family == 'Debian'
 
-- name: Install required packages for Cloud SDK
+- name: Install required packages for Cloud SDK Debian
   vars:
     ansible_python_interpreter: "{{ role_python }}"
   apt:
@@ -53,8 +73,20 @@
     state: present
     update_cache: yes
   environment: "{{ env }}"
+  when: ansible_os_family == 'Debian'
 
-- name: Configure gcloud
+- name: Install required packages for Cloud SDK on RedHat
+  vars:
+    ansible_python_interpreter: "{{ role_python }}"
+  yum:
+    name:
+      - google-cloud-sdk
+    state: present
+    update_cache: yes
+  environment: "{{ env }}"
+  when: ansible_os_family == 'RedHat'
+
+- name: Configure gcloud project and proxy
   become: false
   shell: |
     gcloud config set project "{{ gcloud_project }}"
@@ -66,6 +98,21 @@
   become: false
   command: |
     gcloud auth activate-service-account --project {{ gcloud_project }} --key-file {{ gke_whitelisted_keypath }}
+
+- name: Configure gcloud required apis
+  become: false
+  command: >
+    gcloud services enable
+      anthos.googleapis.com 
+      anthosgke.googleapis.com 
+      cloudresourcemanager.googleapis.com 
+      container.googleapis.com 
+      gkeconnect.googleapis.com 
+      gkehub.googleapis.com 
+      serviceusage.googleapis.com 
+      stackdriver.googleapis.com 
+      monitoring.googleapis.com 
+      logging.googleapis.com
 
 - name: Check for existance of gkeadm binary locally
   stat:

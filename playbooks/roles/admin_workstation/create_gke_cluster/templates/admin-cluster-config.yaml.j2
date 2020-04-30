@@ -33,7 +33,11 @@ admincluster:
     network: "{{ gke_admin_cluster_network }}"
   # # The absolute or relative path to the yaml file to use for static IP allocation.
   # # Do not include if using DHCP
-  # ipblockfilepath: ""
+{% if item.gkenode_net.mode == 'static' %}
+  ipblockfilepath: "{{ item.name }}-ip.yaml"
+{% else %}
+  #  ipblockfilepath: ""
+{% endif %}
   # # Specify pre-defined nodeports if using "manual" load balancer mode
   # manuallbspec:
   #   ingresshttpnodeport: 32527

@@ -20,6 +20,13 @@
     msg: "{{ gcloud_config_out }}"
     verbosity: 2
 
+- name: Install packages for monitoring
+  apt:
+    name:
+      - lnav
+    update_cache: yes
+    state: present
+
 - name: Update the gcloud SDK
   apt:
     name: "{{ cloud_sdk_pkgs }}"

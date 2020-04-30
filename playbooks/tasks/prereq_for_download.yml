@@ -32,13 +32,13 @@
 
 - name: Force OVA download flag to false
   set_fact:
-    download_ova: false
+    gkeadm_download_ova: true
 
 - name: Set OVA download flag
   set_fact:
-    download_ova: true
+    gkeadm_download_ova: false
   when: cwd_mount != tmp_mount
 
 - name: OVA flag state
   debug:
-    msg: "{{ download_ova }}"
+    msg: "{{ gkeadm_download_ova }}"

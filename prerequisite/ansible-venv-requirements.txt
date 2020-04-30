@@ -17,5 +17,6 @@ pyvmomi==6.7.3
 PyYAML==5.3.1
 requests==2.23.0
 six==1.14.0
+selinux==0.2.1
 urllib3==1.25.8
 wcwidth==0.1.9

@@ -50,8 +50,17 @@ fi
 
 # Test for python3 and install venv package
 if python3 -c 'import sys; print(sys.version_info[:])' 2>&1 >/dev/null; then
-    printf "%s\nInstalling python3-venv\n"
-    sudo apt-get install python3-venv
+    if ! python3 -c 'import venv' 2>&1 >/dev/null; then
+        printf "%s\nInstalling python3-venv\n"
+        if cat /proc/version | grep -i ubuntu; then
+            sudo apt -y install python3-venv
+        else
+            printf "%s\nNot ubuntu\n"
+            printf "%s\n\e[1;31m python3 venv should be included on RedHat distros\e[0m\n"
+        fi
+    else
+        printf "%s\n\e[1;32m python venv module already installed\e[0m\n"
+    fi
 else
     printf "%s\nFailed to find python3\n"
     exit
