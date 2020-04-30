@@ -10,14 +10,11 @@ user_home = os.environ['HOME']
 # gkeadm output directory is hardcoded
 gkeadm_output_path = user_home + '/' + 'output' + '/'
 
-# Need to construct path to variable file with GKE Admin Wrkst hostname
-script_path = os.path.realpath(__file__)
-mypath = Path(script_path)
-# Grab the first parts of the path to get the repo path -- Assuming we're in /home/<user>/<repo> for now 
-repo_dir = '/'.join(mypath.parts[0:4])
+# Determine path of this script
+mypath = Path(os.path.realpath(__file__))
 
 # Build the final path to the all.yml file
-var_file = repo_dir + '/inventory/group_vars/all/all.yml'
+var_file = str(mypath.parent.parent) + '/inventory/group_vars/all/all.yml'
 
 # Read all.yml yaml var file. This will have the gkeadm name we need to get the output file with host info
 with open(var_file, 'r') as file:
@@ -39,5 +36,6 @@ for item in contents_lines:
 
 # Take the ssh line from the gkeadm output and combine with ' -t lnav /home/ubuntu/logs' for monitoring
 ssh_cmd_plus = ssh_cmd + ' -t lnav /home/ubuntu/logs'
+
 # Quick and dirty ssh connection
 os.system(ssh_cmd_plus)
