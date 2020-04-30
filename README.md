@@ -277,3 +277,16 @@ ok: [gke-admin-ws -> localhost] => {
     ]
 }
 ```
+
+## Monitor GKE Cluster Creation
+
+Once the GKE Admin Workstation is created, monitoring of the cluster creation logs can be done by executing the script `cluster-watch.py` in the ***scripts*** directory.
+To execute the program:
+
+* Open new terminal session on Ansible control node
+* source the same python virtual environment as you did for Ansible
+* run `cluster-watch.py`
+
+The script uses the linux `lnav` program to tail the log files created during the GKE cluster creation.
+
+NOTE: If executing this on an existing GKE Admin Workstation (i.e. built before you read this new README) then you need to re-run playbook/deploy_admin_wrkst.yml to install dependencies.
