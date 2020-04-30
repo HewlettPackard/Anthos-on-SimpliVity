@@ -3,7 +3,7 @@
 - name: Include the filesytem check for gkeadm requirements
   import_tasks: tasks/prereq_for_download.yml
 
-- name: Check if gke admin workstation exists
+- name: Check if gke admin workstation exists using global vcenter config
   become: false
   vmware_guest_info:
     hostname: "{{ vcenter.address }}"
@@ -14,6 +14,20 @@
     validate_certs: no
   register: admin_wrkst_info
   failed_when: false
+  when: not gke_admin_workstation.alt_vcenter.enable
+
+- name: Check if gke admin workstation exists using gkeadm alt_vcenter
+  become: false
+  vmware_guest_info:
+    hostname: "{{ gke_admin_workstation.alt_vcenter.address }}"
+    username: "{{ gke_admin_workstation.alt_vcenter.username }}"
+    password: "{{ gke_admin_workstation.alt_vcenter.password }}"
+    datacenter: "{{ gke_admin_workstation.alt_vcenter.datacenter }}"
+    name: "{{ gke_admin_workstation.name }}"
+    validate_certs: no
+  register: admin_wrkst_info
+  failed_when: false
+  when: gke_admin_workstation.alt_vcenter.enable
 
 - debug:
     msg: "{{ admin_wrkst_info }}"
