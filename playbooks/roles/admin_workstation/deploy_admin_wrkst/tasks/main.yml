@@ -3,7 +3,7 @@
 - name: Include the filesytem check for gkeadm requirements
   import_tasks: tasks/prereq_for_download.yml
 
-- name: Check if gke admin workstation exists
+- name: Check if gke admin workstation exists using global vcenter config
   become: false
   vmware_guest_info:
     hostname: "{{ vcenter.address }}"
@@ -13,19 +13,36 @@
     name: "{{ gke_admin_workstation.name }}"
     validate_certs: no
   register: admin_wrkst_info
-  failed_when: false
+  ignore_errors: true
+  when: not gke_admin_workstation.alt_vcenter.enable
 
 - debug:
     msg: "{{ admin_wrkst_info }}"
+    verbosity: 2
+
+- name: Check if gke admin workstation exists using gkeadm alt_vcenter
+  become: false
+  vmware_guest_info:
+    hostname: "{{ gke_admin_workstation.alt_vcenter.address }}"
+    username: "{{ gke_admin_workstation.alt_vcenter.username }}"
+    password: "{{ gke_admin_workstation.alt_vcenter.password }}"
+    datacenter: "{{ gke_admin_workstation.alt_vcenter.datacenter }}"
+    name: "{{ gke_admin_workstation.name }}"
+    validate_certs: no
+  register: alt_admin_wrkst_info
+  ignore_errors: true
+  when: gke_admin_workstation.alt_vcenter.enable
+
+- debug:
+    msg: "{{ alt_admin_wrkst_info }}"
     verbosity: 2
 
 - name: Set flag for running gkeadm based on existance (or not) of VM
   set_fact:
     run_gkeadm: true
   when: >
-    admin_wrkst_info.msg is defined and 'non-existing VM' in admin_wrkst_info.msg
-    or 'non-existing VM' in admin_wrkst_info
-    or admin_wrkst_info.failed
+    admin_wrkst_info is failed
+    or alt_admin_wrkst_info is failed
   failed_when: false
 
 - name: Create input file for gkeadm for creating GKE Admin workstation
@@ -46,6 +63,9 @@
   when: >
     run_gkeadm is defined
     and gkeadm_ova_path is exists
+  until: gkeadm_output.rc == 0
+  retries: 2
+  delay: 2
 
 - name: Use Google gkeadm to deploy gke admin workstation and download the OVA
   become: false
@@ -58,6 +78,9 @@
   when: >
     run_gkeadm is defined
     and not gkeadm_ova_path is exists
+  until: gkeadm_output.rc == 0
+  retries: 2
+  delay: 2
 
 - debug: 
     msg: "{{ gkeadm_output }}"

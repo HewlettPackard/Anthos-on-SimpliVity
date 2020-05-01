@@ -3,6 +3,20 @@ gcp:
   whitelistedServiceAccountKeyPath: "{{ gke_whitelisted_keypath }}"
 # Specify which vCenter resources to use
 vCenter:
+{% if gke_admin_workstation.alt_vcenter.enable %}
+  # The credentials and address GKE On-Prem should use to connect to vCenter
+  credentials:
+    address: "{{ gke_admin_workstation.alt_vcenter.address }}"
+    username: "{{ gke_admin_workstation.alt_vcenter.username }}"
+    password: "{{ gke_admin_workstation.alt_vcenter.password }}"
+  datacenter: "{{ gke_admin_workstation.alt_vcenter.datacenter }}"
+  datastore: "{{ gke_admin_workstation.alt_vcenter.datastore }}"
+  cluster: "{{ gke_admin_workstation.alt_vcenter.cluster }}"
+  network: "{{ gke_admin_workstation.alt_vcenter.network }}"
+  resourcePool: "{{ gke_admin_workstation.alt_vcenter.resourcepool }}"
+  # Provide the path to vCenter CA certificate pub key for SSL verification
+  caCertPath: "{{ gke_admin_workstation.alt_vcenter.cacertpath_gkeadm }}"
+{% else %}
   # The credentials and address GKE On-Prem should use to connect to vCenter
   credentials:
     address: "{{ vcenter.address }}"
@@ -15,6 +29,7 @@ vCenter:
   resourcePool: "{{ vcenter.resourcepool }}"
   # Provide the path to vCenter CA certificate pub key for SSL verification
   caCertPath: "{{ vcenter.cacertpath_gkeadm }}"
+{% endif %}
 # The URL of the proxy for the jump host
 proxyUrl: "{{ gke_admin_workstation.proxyUrl }}"
 adminWorkstation:

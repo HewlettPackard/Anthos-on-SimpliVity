@@ -46,6 +46,19 @@ gke_admin_workstation:
   #dns:
   #  - nameserver_ip
   #  - nameserver_ip
+  # If you desire to deploy your GKE Admin Workstation to a different vsphere infrastructure, enter values here
+  # and set 'enable: true'. If 'enable: false' then values from global vcenter config will be used.
+  alt_vcenter:
+    enable: true
+    address: '10.1.223.196'
+    username: "{{ vault_gkeadm_vcenter_username }}"
+    password: "{{ vault_gkeadm_vcenter_password }}"
+    datacenter: 'Datacenter'
+    datastore: 'csi-2'
+    cluster: 'New Cluster'
+    network: 'VM Network 2'
+    resourcepool: 'New Cluster/Resources/'
+    cacertpath_gkeadm: "{{ local_secrets_path }}/vmware/vcenter.pem"
 
 # Path to GKE Admin Workstation OVA file to install. If defined and valid gkeadm will use this file.
 # If empty '' or invalid gkeadm will download the OVA into the directory defined by the variable 'output_directory:'
