@@ -8,7 +8,7 @@ vcenter:
     username: "{{ vault_vcenter_username }}"
     password: "{{ vault_vcenter_password }}"
   datacenter: "{{ vcenter.datacenter }}"
-  datastore: "{{ vcenter.datastore }}"
+  datastore: "{{ item.datastore | default(vcenter.datastore, true) }}"
   cluster: "{{ vcenter.cluster }}"
   network: "{{ gke_network_internal }}"
   resourcepool: "{{ gke_cluster_resource_pool }}"
