@@ -57,7 +57,7 @@ gke_admin_workstation:
     datastore: 'csi-2'
     cluster: 'New Cluster'
     network: 'VM Network 2'
-    resourcepool: 'New Cluster/Resources/'
+    resourcepool: 'New Cluster/Resources/Anthos_1.3'
     cacertpath_gkeadm: "{{ local_secrets_path }}/vmware/vcenter.pem"
 
 # Path to GKE Admin Workstation OVA file to install. If defined and valid gkeadm will use this file.
@@ -202,6 +202,8 @@ gke_cluster_config:
       f5_partition: 'Spanned_VIP_user'
       cluster_ctrl_vip: '172.17.0.69'
       cluster_ingress_vip: '172.17.0.72'
+      csi_storageclass_name: 'test4-sc'
+      csi_datastore_name: 'csi-2'
       state: present
       gkenode_net:
         mode: 'dhcp'
@@ -231,6 +233,8 @@ gke_cluster_config:
       f5_partition: 'user2_VIP'
       cluster_ctrl_vip: '172.17.0.32'
       cluster_ingress_vip: '172.17.0.33'
+      csi_storageclass_name: 'test5-sc'
+      csi_datastore_name: 'ds1'
       state: present
       gkenode_net:
         mode: 'dhcp'

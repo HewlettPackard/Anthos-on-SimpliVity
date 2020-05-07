@@ -1,9 +1,7 @@
 ---
 # tasks file for csi
-- name: Get the IP for the current admin WS
-  import_tasks: tasks/admin_ws_ip.yml
 
-- name: Loop over clusters to install csi driver
+- name: Loop over user clusters to install csi driver
   include_tasks: provision.yml
   loop: "{{ gke_cluster_config }}"
   when: item.type == "user"

@@ -20,10 +20,11 @@
     msg: "{{ gcloud_config_out }}"
     verbosity: 2
 
-- name: Install packages for monitoring
+- name: Install packages for monitoring and python pip
   apt:
     name:
       - lnav
+      - python3-pip
     update_cache: yes
     state: present
 
