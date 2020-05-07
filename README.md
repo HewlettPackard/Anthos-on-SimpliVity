@@ -37,6 +37,11 @@ The use of a Python Virtual environment allows for flexibility in ansible host c
 
 The provided script `prerequisites/ansible-setup.sh` will build the python virtualenv needed to execute the playbooks.  
 
+NOTE: You may need to modify the following proxy settings in the ansible-setup.sh script based on your environment:
+
+HTTPS_PROXY="HTTPS_PROXY=http://16.100.211.43:8888"
+needs_proxy=false
+
 ```text
 ~/Anthos-on-SimpliVity$ ./prerequisite/ansible-setup.sh -h
 
