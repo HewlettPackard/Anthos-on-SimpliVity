@@ -40,7 +40,7 @@ The provided script `prerequisites/ansible-setup.sh` will build the python virtu
 NOTE: You may need to modify the following proxy settings in the ansible-setup.sh script based on your environment:
 ```text
 HTTPS_PROXY="HTTPS_PROXY=http://16.100.211.43:8888"
-needs_proxy=false
+needs_proxy=true
 ```
 
 ```text
