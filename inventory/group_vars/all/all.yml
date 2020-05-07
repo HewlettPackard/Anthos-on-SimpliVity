@@ -20,9 +20,9 @@ vcenter:
   password: "{{ vault_vcenter_password }}"
   datacenter: 'Datacenter'
   datastore: 'ds1'
-  cluster: 'New Cluster'
+  cluster: "New_Cluster"
   network: 'VM Network 2'
-  resourcepool: 'New Cluster/Resources/'
+  resourcepool: 'New_Cluster/Resources/'
   cacertpath_gkeadm: "{{ local_secrets_path }}/vmware/vcenter.pem"
   cacertpath_gkectl: "{{ remote_secrets_path }}/vmware/vcenter.pem"
 
@@ -55,9 +55,9 @@ gke_admin_workstation:
     password: "{{ vault_gkeadm_vcenter_password }}"
     datacenter: 'Datacenter'
     datastore: 'csi-2'
-    cluster: 'New Cluster'
+    cluster: 'New_Cluster'
     network: 'VM Network 2'
-    resourcepool: 'New Cluster/Resources/Anthos_1.3'
+    resourcepool: 'New_Cluster/Resources/Anthos_1.3'
     cacertpath_gkeadm: "{{ local_secrets_path }}/vmware/vcenter.pem"
 
 # Path to GKE Admin Workstation OVA file to install. If defined and valid gkeadm will use this file.
@@ -202,8 +202,9 @@ gke_cluster_config:
       f5_partition: 'Spanned_VIP_user'
       cluster_ctrl_vip: '172.17.0.69'
       cluster_ingress_vip: '172.17.0.72'
-      csi_storageclass_name: 'test4-sc'
-      csi_datastore_name: 'csi-2'
+      csi_storageclass_name: 'test4-3-sc'
+      csi_datastore_name: 'csi-3'
+      csi_datastore_size: '20'
       state: present
       gkenode_net:
         mode: 'dhcp'
@@ -235,6 +236,7 @@ gke_cluster_config:
       cluster_ingress_vip: '172.17.0.33'
       csi_storageclass_name: 'test5-sc'
       csi_datastore_name: 'ds1'
+      csi_datastore_size: '20'
       state: present
       gkenode_net:
         mode: 'dhcp'
@@ -312,3 +314,11 @@ f5:
     - { key: "{{ vault_f5_license_key }}", state: present }
   
 
+#
+# SimpliVity
+#
+simplivity_validate_certs: false
+simplivity_appliances:
+- 10.1.222.46
+- 10.1.222.47
+- 10.1.222.57
