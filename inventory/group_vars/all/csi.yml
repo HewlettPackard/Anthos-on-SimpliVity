@@ -1,7 +1,0 @@
-#
-# CSI Storage plugin
-#
-csi_datastore_name: csi-2
-csi_storageclass_name: csivols
-csi_datastore_size: 20
-csi_driver: hpesvt
