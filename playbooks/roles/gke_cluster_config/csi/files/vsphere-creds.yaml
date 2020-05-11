@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: vsphere-config-secret
-data:
-  csi-vsphere.conf: "Insert base64 encoded vsphere.conf string here"
-
-

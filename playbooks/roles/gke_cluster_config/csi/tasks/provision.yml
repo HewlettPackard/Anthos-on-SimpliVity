@@ -1,7 +1,5 @@
 ---
 # tasks file for csi
-- name: Get the IP for the current admin WS
-  import_tasks: tasks/admin_ws_ip.yml
 
 - name: Clear env if proxyUrl is not defined
   set_fact:
