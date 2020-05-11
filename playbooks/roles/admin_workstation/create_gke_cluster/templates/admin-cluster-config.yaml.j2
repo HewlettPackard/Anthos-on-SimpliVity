@@ -21,9 +21,17 @@ vcenter:
 # Specify the proxy configuration.
 proxy:
   # The URL of the proxy
+{% if gke_admin_workstation.proxyUrl is defined and gke_admin_workstation.proxyUrl | length %}
   url: "{{ gke_admin_workstation.proxyUrl }}"
+{% else %}
+  # url: ""
+{% endif %}
   # The domains and IP addresses excluded from proxying
+{% if no_proxy is defined and no_proxy | length %}
   noproxy: "{{ no_proxy }}"
+{% else %}
+  # noproxy: ""
+{% endif %}
 # Specify admin cluster settings for a fresh GKE On-Prem deployment. Omit this section
 # and use the --kubeconfig flag when adding a new user cluster to an existing deployment
 admincluster:
