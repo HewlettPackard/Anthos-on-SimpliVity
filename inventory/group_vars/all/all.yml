@@ -22,7 +22,7 @@ vcenter:
   datastore: 'ds1'
   cluster: "New_Cluster"
   network: 'VM Network 2'
-  resourcepool: 'New_Cluster/Resources/'
+  resourcepool: 'New_Cluster/Resources/Anthos_1.3'
   cacertpath_gkeadm: "{{ local_secrets_path }}/vmware/vcenter.pem"
   cacertpath_gkectl: "{{ remote_secrets_path }}/vmware/vcenter.pem"
 
@@ -31,8 +31,8 @@ vcenter:
 #####
 gke_admin_workstation:
   secrets_path: "{{ remote_secrets_path }}"
-  proxyUrl: 'http://16.100.208.216:8888'
-  name: 'gke-adm-test-2'
+  proxyUrl: 'http://16.100.211.43:8888'
+  name: 'gke-adm-test-7'
   cpus: '4'
   memoryMB: '8192'
   diskGB: '50'
@@ -49,7 +49,7 @@ gke_admin_workstation:
   # If you desire to deploy your GKE Admin Workstation to a different vsphere infrastructure, enter values here
   # and set 'enable: true'. If 'enable: false' then values from global vcenter config will be used.
   alt_vcenter:
-    enable: true
+    enable: false
     address: '10.1.223.196'
     username: "{{ vault_gkeadm_vcenter_username }}"
     password: "{{ vault_gkeadm_vcenter_password }}"
@@ -66,7 +66,7 @@ gke_admin_workstation:
 gkeadm_ova_path: ''
 
 # Path/Filename where ansible should create the yaml config file for deploying the GKE Admin Workstation
-gkeadm_config: '{{ local_secrets_path }}/admin-ws-configtest.yaml'
+gkeadm_config: '{{ local_secrets_path }}/admin-ws-config-{{ gke_admin_workstation.name }}.yaml'
 
 # Path to ssh private key to install on GKE Admin Workstation
 # This key will also be used by ansible to connect to admin workstation
@@ -207,7 +207,6 @@ gke_cluster_config:
       csi_storageclass_name: 'test4-3-sc'
       csi_datastore_name: 'csi-3'
       csi_datastore_size: '20'
-      state: present
       datastore: ''
       gkenode_net:
         mode: 'dhcp'
@@ -241,7 +240,6 @@ gke_cluster_config:
       csi_storageclass_name: 'test5-sc'
       csi_datastore_name: 'ds1'
       csi_datastore_size: '20'
-      state: present
       datastore: 'csi-2'
       gkenode_net:
         mode: 'dhcp'

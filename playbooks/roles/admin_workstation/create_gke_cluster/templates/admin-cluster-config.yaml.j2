@@ -97,6 +97,7 @@ stackdriver:
 cloudrun:
   enabled: {{ enable_cloudrun }}
 # # Optionally use a private Docker registry to host GKE images
+{% if private_docker_registry %}
 privateregistryconfig:
   # Do not include the scheme with your registry address
   credentials:
@@ -105,6 +106,16 @@ privateregistryconfig:
     password: "{{ private_reg_password }}"
 #   # The absolute or relative path to the CA certificate for this registry
   cacertpath: "{{ private_reg_cert_path_gkectl }}"
+{% else %}
+# privateregistryconfig:
+#   # Do not include the scheme with your registry address
+#   credentials:
+#     address: ""
+#     username: ""
+#     password: ""
+#   # The absolute or relative path to the CA certificate for this registry
+#   cacertpath: ""
+{% endif %}
 # The absolute or relative path to the GCP service account key that will be used to
 # pull GKE images
 gcrkeypath: "{{ gke_whitelisted_keypath }}"

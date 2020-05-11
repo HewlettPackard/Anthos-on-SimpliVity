@@ -31,7 +31,11 @@ vCenter:
   caCertPath: "{{ vcenter.cacertpath_gkeadm }}"
 {% endif %}
 # The URL of the proxy for the jump host
+{% if gke_admin_workstation.proxyUrl is defined and gke_admin_workstation.proxyUrl | length %}
 proxyUrl: "{{ gke_admin_workstation.proxyUrl }}"
+{% else %}
+# proxyUrl: ""
+{% endif %}
 adminWorkstation:
   name: "{{ gke_admin_workstation.name }}"
   cpus: {{ gke_admin_workstation.cpus }}
