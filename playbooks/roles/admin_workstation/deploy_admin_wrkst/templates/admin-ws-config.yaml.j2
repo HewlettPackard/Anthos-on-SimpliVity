@@ -60,5 +60,9 @@ adminWorkstation:
       dns: {{ gke_admin_workstation.dns }}
 {% endif %}
   # The URL of the proxy for the admin workstation
+{% if gke_admin_workstation.proxyUrl is defined and gke_admin_workstation.proxyUrl | length %}
   proxyUrl: "{{ gke_admin_workstation.proxyUrl }}"
+{% else %}
+  # proxyUrl: ""
+{% endif %}
   ntpServer: "{{ gke_admin_workstation.ntpServer }}"
