@@ -1,0 +1,8 @@
+---
+- hosts: anthos_admin
+  become: no
+  gather_facts: false
+
+  roles:
+    - role: common/datastore
+    - role: gke_cluster_config/csi

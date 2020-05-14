@@ -1,0 +1,116 @@
+---
+# tasks file for csi
+
+- name: Clear env if proxyUrl is not defined
+  set_fact:
+    env: {}
+  when: gke_admin_workstation.proxyUrl is not defined
+
+- name: Set env if proxyUrl is defined
+  set_fact:
+    env:
+      http_proxy: "{{ gke_admin_workstation.proxyUrl }}"
+      https_proxy: "{{ gke_admin_workstation.proxyUrl }}"
+      no_proxy: "{{ no_proxy }}"
+  when: gke_admin_workstation.proxyUrl is defined
+
+- set_fact:
+    uc_kube_config_file: "{{ cluster_kubeconfig_path }}/{{ item.name }}-{{ admin_cluster_kubeconfig }}"
+
+- name: Verify Presence of the kubeconfig file for {{ item.type }} cluster - {{ item.name }}
+  stat:
+    path: "{{ uc_kube_config_file }}"
+  register: res
+
+- fail:
+    msg: "Cannot find the kubeconfig file {{ uc_kube_config_file }} for cluster {{ item.name }} "
+  when: not res.stat.exists
+
+- name: Install k8s module prereq
+  become: true
+  pip:
+    name: openshift
+    executable: pip3
+  environment: "{{ env }}"
+
+- name: Create CSI Secret for {{ item.type }} cluster - {{ item.name }}
+  k8s:
+    state: present
+    validate_certs: true
+    kubeconfig: "{{ uc_kube_config_file }}"
+    definition:
+      kind: Secret
+      apiVersion: v1
+      data:
+        csi-vsphere.conf: "{{ lookup('template', 'csi-secret.conf.j2') | b64encode }}"
+      metadata:
+        name: vsphere-config-secret
+        namespace: kube-system
+
+
+- name: Set variables specific to HPESVT CSI Driver
+  set_fact:
+    csi_controller_rbac: "svt-csi-controller-rbac.yaml"
+    csi_controller_deployment: "svt-csi-controller-deployment.yaml"
+    csi_controller_node_ds: "svt-csi-node-ds.yaml"
+    csi_provisioner: "csi.simplivity.hpe.com"
+  when: csi_driver == "hpesvt"
+
+- name: Create Controller RBAC for {{ item.type }} cluster - {{ item.name }}
+  k8s:
+    state: present
+    validate_certs: true
+    kubeconfig: "{{ uc_kube_config_file }}"
+    definition: "{{ lookup('file','{{ csi_controller_rbac }}') }}"
+
+- name: Create Controller Deployment and Driver for {{ item.type }} cluster - {{ item.name }}
+  k8s:
+    state: present
+    validate_certs: true
+    kubeconfig: "{{ uc_kube_config_file }}"
+    definition: "{{ lookup('file','{{ csi_controller_deployment }}') }}"
+
+- name: Create CSI DaemonSet for {{ item.type }} cluster - {{ item.name }}
+  k8s:
+    state: present
+    validate_certs: true
+    kubeconfig: "{{ uc_kube_config_file }}"
+    definition: "{{ lookup('file','{{ csi_controller_node_ds }}') }}"
+
+- name: See if the CSI Storage Class exists for {{ item.type }} cluster - {{ item.name }}
+  k8s_info:
+    kubeconfig: "{{ uc_kube_config_file }}"
+    kind: StorageClass
+    name: "{{ item.csi_storageclass_name }}"
+    validate_certs: true
+  register: sc
+
+- debug:
+    msg: "Storage Class '{{ item.csi_storageclass_name }}' already exists."
+  when: sc.resources | count > 0
+
+- block:
+
+  - name: Get CSI Datastore Info for {{ item.type }} cluster - {{ item.name }}
+    vmware_datastore_info:
+      hostname: '{{ vcenter.address }}'
+      username: '{{ vcenter.username }}'
+      password: '{{ vcenter.password }}'
+      datacenter_name: '{{ vcenter.datacenter }}'
+      name: "{{ item.csi_datastore_name | default(datastores[0]) }}"
+      #validate_certs:  "{{ vcenter_validate_certs }}"
+      validate_certs:  false
+    delegate_to: localhost
+    register: csi_datastore_info
+
+  - name: Create CSI Storage Class for {{ item.type }} cluster - {{ item.name }}
+    k8s:
+      state: present
+      validate_certs: true
+      kubeconfig: "{{ uc_kube_config_file }}"
+      definition: "{{ lookup('template','csi-sc.yml.j2') }}"
+
+  - debug:
+      msg: "Storage Class '{{ item.csi_storageclass_name }}' Created"
+
+  when: sc.resources | count < 1

@@ -8,7 +8,7 @@ vcenter:
     username: "{{ vault_vcenter_username }}"
     password: "{{ vault_vcenter_password }}"
   datacenter: "{{ vcenter.datacenter }}"
-  datastore: "{{ vcenter.datastore }}"
+  datastore: "{{ item.datastore | default(vcenter.datastore, true) }}"
   cluster: "{{ vcenter.cluster }}"
   network: "{{ gke_network_internal }}"
   resourcepool: "{{ gke_cluster_resource_pool }}"
@@ -21,9 +21,17 @@ vcenter:
 # Specify the proxy configuration.
 proxy:
   # The URL of the proxy
+{% if gke_admin_workstation.proxyUrl is defined and gke_admin_workstation.proxyUrl | length %}
   url: "{{ gke_admin_workstation.proxyUrl }}"
+{% else %}
+  # url: ""
+{% endif %}
   # The domains and IP addresses excluded from proxying
+{% if no_proxy is defined and no_proxy | length %}
   noproxy: "{{ no_proxy }}"
+{% else %}
+  # noproxy: ""
+{% endif %}
 # Specify admin cluster settings for a fresh GKE On-Prem deployment. Omit this section
 # and use the --kubeconfig flag when adding a new user cluster to an existing deployment
 admincluster:
@@ -97,6 +105,7 @@ stackdriver:
 cloudrun:
   enabled: {{ enable_cloudrun }}
 # # Optionally use a private Docker registry to host GKE images
+{% if private_docker_registry %}
 privateregistryconfig:
   # Do not include the scheme with your registry address
   credentials:
@@ -105,6 +114,16 @@ privateregistryconfig:
     password: "{{ private_reg_password }}"
 #   # The absolute or relative path to the CA certificate for this registry
   cacertpath: "{{ private_reg_cert_path_gkectl }}"
+{% else %}
+# privateregistryconfig:
+#   # Do not include the scheme with your registry address
+#   credentials:
+#     address: ""
+#     username: ""
+#     password: ""
+#   # The absolute or relative path to the CA certificate for this registry
+#   cacertpath: ""
+{% endif %}
 # The absolute or relative path to the GCP service account key that will be used to
 # pull GKE images
 gcrkeypath: "{{ gke_whitelisted_keypath }}"

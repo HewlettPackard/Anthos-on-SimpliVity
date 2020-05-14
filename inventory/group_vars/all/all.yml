@@ -20,9 +20,9 @@ vcenter:
   password: "{{ vault_vcenter_password }}"
   datacenter: 'Datacenter'
   datastore: 'ds1'
-  cluster: 'New Cluster'
+  cluster: "New_Cluster"
   network: 'VM Network 2'
-  resourcepool: 'New Cluster/Resources/'
+  resourcepool: 'New_Cluster/Resources/Anthos_1.3'
   cacertpath_gkeadm: "{{ local_secrets_path }}/vmware/vcenter.pem"
   cacertpath_gkectl: "{{ remote_secrets_path }}/vmware/vcenter.pem"
 
@@ -31,8 +31,8 @@ vcenter:
 #####
 gke_admin_workstation:
   secrets_path: "{{ remote_secrets_path }}"
-  proxyUrl: 'http://16.100.208.216:8888'
-  name: 'gke-adm-test-2'
+  proxyUrl: 'http://16.100.211.43:8888'
+  name: 'gke-adm-test-7'
   cpus: '4'
   memoryMB: '8192'
   diskGB: '50'
@@ -49,15 +49,15 @@ gke_admin_workstation:
   # If you desire to deploy your GKE Admin Workstation to a different vsphere infrastructure, enter values here
   # and set 'enable: true'. If 'enable: false' then values from global vcenter config will be used.
   alt_vcenter:
-    enable: true
+    enable: false
     address: '10.1.223.196'
     username: "{{ vault_gkeadm_vcenter_username }}"
     password: "{{ vault_gkeadm_vcenter_password }}"
     datacenter: 'Datacenter'
     datastore: 'csi-2'
-    cluster: 'New Cluster'
+    cluster: 'New_Cluster'
     network: 'VM Network 2'
-    resourcepool: 'New Cluster/Resources/'
+    resourcepool: 'New_Cluster/Resources/Anthos_1.3'
     cacertpath_gkeadm: "{{ local_secrets_path }}/vmware/vcenter.pem"
 
 # Path to GKE Admin Workstation OVA file to install. If defined and valid gkeadm will use this file.
@@ -66,7 +66,7 @@ gke_admin_workstation:
 gkeadm_ova_path: ''
 
 # Path/Filename where ansible should create the yaml config file for deploying the GKE Admin Workstation
-gkeadm_config: '{{ local_secrets_path }}/admin-ws-configtest.yaml'
+gkeadm_config: '{{ local_secrets_path }}/admin-ws-config-{{ gke_admin_workstation.name }}.yaml'
 
 # Path to ssh private key to install on GKE Admin Workstation
 # This key will also be used by ansible to connect to admin workstation
@@ -170,10 +170,11 @@ gcp_region: 'us-east1'
 gke_cluster_config:
     - name: 'admin'
       type: 'admin'
-      f5_partition: 'Spanned_VIP'
       state: present
+      f5_partition: 'Spanned_VIP'
       cluster_ctrl_vip: '172.17.0.21'
       cluster_ingress_vip: '172.17.0.22'
+      datastore: '' #If left blank the global vcenter.datastore will be used
       gkenode_net:
         mode: 'dhcp'
         dns: '192.168.1.1'
@@ -199,10 +200,14 @@ gke_cluster_config:
            hostname: admin-host5
     - name: 'sg-test4-13'
       type: 'user'
+      state: present
       f5_partition: 'Spanned_VIP_user'
       cluster_ctrl_vip: '172.17.0.69'
       cluster_ingress_vip: '172.17.0.72'
-      state: present
+      csi_storageclass_name: 'test4-3-sc'
+      csi_datastore_name: 'csi-3'
+      csi_datastore_size: '20'
+      datastore: ''
       gkenode_net:
         mode: 'dhcp'
         dns: '192.168.2.1'
@@ -228,10 +233,14 @@ gke_cluster_config:
            hostname: sg-test4-host5
     - name: 'sg-test5-13'
       type: 'user'
+      state: present
       f5_partition: 'user2_VIP'
       cluster_ctrl_vip: '172.17.0.32'
       cluster_ingress_vip: '172.17.0.33'
-      state: present
+      csi_storageclass_name: 'test5-sc'
+      csi_datastore_name: 'ds1'
+      csi_datastore_size: '20'
+      datastore: 'csi-2'
       gkenode_net:
         mode: 'dhcp'
         dns: '192.168.3.1'
@@ -308,3 +317,11 @@ f5:
     - { key: "{{ vault_f5_license_key }}", state: present }
   
 
+#
+# SimpliVity
+#
+simplivity_validate_certs: false
+simplivity_appliances:
+- 10.1.222.46
+- 10.1.222.47
+- 10.1.222.57
