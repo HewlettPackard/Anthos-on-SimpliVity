@@ -111,6 +111,6 @@
       definition: "{{ lookup('template','csi-sc.yml.j2') }}"
 
   - debug:
-      msg: "Storage Class '{{ csi_storageclass_name }}' Created"
+      msg: "Storage Class '{{ item.csi_storageclass_name }}' Created"
 
   when: sc.resources | count < 1
