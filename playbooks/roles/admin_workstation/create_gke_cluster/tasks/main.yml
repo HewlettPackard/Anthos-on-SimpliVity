@@ -11,6 +11,15 @@
     - "{{ cluster_configurations_path }}" 
     - "{{ cluster_kubeconfig_path }}"
     - "{{ log_directory }}"
+    - "{{ secrets_directory }}"
+
+- name: Copy Anthos Secrets to admin WS
+  become: false
+  copy:
+    src: "{{ secrets_path }}"
+    dest: "{{ gkeadm_basedir }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 - name: Copy cluster configuration files to admin WS
   become: false

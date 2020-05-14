@@ -1,2 +1,11 @@
 ---
 # defaults file for create_user_cluster
+#gke_cluster_vcenter_ssl_pub_key: 'vcenter.pem'
+gke_connectRegister_key: 'connect-register-key.json'
+gke_connectAgent_key: 'connect-agent-key.json'
+gke_auditLogging_key: 'audit-logging-key.json'
+gke_stackdriver_key: 'logging-monitoring-key.json'
+# gke_whitelisted_key defined in all.yml
+# gke_whitelisted_key: 'whitelisted-key.json'
+# Optional for user cluster
+gke_usageMetering_key: 'usage-metering-key.json'
