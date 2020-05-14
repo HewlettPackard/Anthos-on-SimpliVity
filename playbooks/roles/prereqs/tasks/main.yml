@@ -7,10 +7,11 @@
 - name: Create required directories
   become: false 
   file:
-    path: 
-      - "{{ output_directory }}"
-      - "{{ secrets_directory }}"
+    path: "{{ item }}"
     state: directory
+  with_items:
+      - "{{ output_directory }}"
+      - "{{ secrets_path }}"
 
 - name: Clear env if proxyUrl is not defined
   set_fact:
