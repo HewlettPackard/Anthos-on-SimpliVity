@@ -1,0 +1,101 @@
+# tasks file for service_mesh
+
+- name: Clear env if proxyUrl is not defined
+  set_fact:
+    env: {}
+  when: gke_admin_workstation.proxyUrl is not defined
+
+- name: Set env if proxyUrl is defined
+  set_fact:
+    env:
+      http_proxy: "{{ gke_admin_workstation.proxyUrl }}"
+      https_proxy: "{{ gke_admin_workstation.proxyUrl }}"
+      no_proxy: "{{ no_proxy }}"
+  when: gke_admin_workstation.proxyUrl is defined
+
+- set_fact:
+    uc_kube_config_file: "{{ cluster_kubeconfig_path }}/{{ item.name }}-{{ admin_cluster_kubeconfig }}"
+
+- name: Verify Presence of the kubeconfig file for {{ item.type }} cluster - {{ item.name }}
+  stat:
+    path: "{{ uc_kube_config_file }}"
+  register: res
+
+- fail:
+    msg: "Cannot find the kubeconfig file {{ uc_kube_config_file }} for cluster {{ item.name }} "
+  when: not res.stat.exists
+
+- name: Install k8s module prereq
+  become: true
+  pip:
+    name: openshift
+    executable: pip3
+  environment: "{{ env }}"
+
+# create istio-system namespace
+- name: Create Namespace for {{ item.type }} cluster - {{ item.name }}
+  k8s:
+    name: "{{ service_mesh_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+    kubeconfig: "{{ uc_kube_config_file }}"
+
+# copy required root cert into istio-system
+# Need to look a different way of doing this since the --export flag is deprecated
+- name: Copy root cert into istio-system namespace for {{ item.type }} cluster - {{ item.name }}
+  shell:
+    cmd: >
+      kubectl get secret istio-ca-secret --namespace=kube-system --export
+      -o yaml | kubectl apply --validate=false --namespace={{ service_mesh_namespace }} -f -
+  environment:
+    - KUBECONFIG: "{{ uc_kube_config_file }}"
+
+- name: Deploy Service Mesh package for {{ item.type }} cluster - {{ item.name }}
+  command: |
+    bin/istioctl manifest apply --set profile=asm-onprem
+  args:
+    chdir: "{{ gkeadm_basedir }}/{{ service_mesh_version }}"
+  environment:
+    - KUBECONFIG: "{{ uc_kube_config_file }}"
+
+- name: Monitor completion of service mesh deployment for {{ item.type }} cluster - {{ item.name }}
+  command: |
+    kubectl wait --for=condition=available --timeout=600s deployment --all -n {{ service_mesh_namespace }}
+  register: service_mesh_deployment
+  retries: 1
+  until: service_mesh_deployment.rc == 0
+  environment:
+    - KUBECONFIG: "{{ uc_kube_config_file }}"
+
+- debug:
+    msg: "{{ service_mesh_deployment }}"
+    verbosity: 2
+
+- name: Update the External IP for the LoadBalancer
+  k8s:
+    kubeconfig: "{{ uc_kube_config_file }}"
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: istio-ingressgateway
+        namespace: "{{ service_mesh_namespace }}"
+      spec:
+        loadBalancerIP: "{{ item.anthos_service_mesh_externalIP }}"
+  when: item.anthos_service_mesh_externalIP | ipaddr
+
+- name: Annotate the Namespace to enable istio sidecar injection
+  k8s:
+    kubeconfig: "{{ uc_kube_config_file }}"
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ namespace | default('default') }}"
+        labels:
+          istio_injection: enabled
+  loop: "{{ item.anthos_service_mesh_sidecar_enable }}"
+  loop_control:
+    loop_var: namespace
+  when: item.anthos_service_mesh_sidecar_enable

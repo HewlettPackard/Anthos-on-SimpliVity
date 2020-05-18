@@ -17,7 +17,7 @@
   become: false
   copy:
     src: "{{ secrets_path }}"
-    dest: "{{ gkeadm_basedir }}"
+    dest: "{{ gkeadm_basedir }}/{{ secrets_directory }}"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 

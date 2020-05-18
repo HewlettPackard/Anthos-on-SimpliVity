@@ -1,0 +1,86 @@
+---
+# tasks file for service-mesh
+
+- name: Get the IP for the current admin WS
+  import_tasks: tasks/admin_ws_ip.yml
+
+- name: Clear env if proxyUrl is not defined
+  set_fact:
+    env: {}
+  when: gke_admin_workstation.proxyUrl is not defined
+
+- name: Set env if proxyUrl is defined
+  set_fact:
+    env:
+      http_proxy: "{{ gke_admin_workstation.proxyUrl }}"
+      https_proxy: "{{ gke_admin_workstation.proxyUrl }}"
+      no_proxy: "{{ no_proxy }}"
+  when: gke_admin_workstation.proxyUrl is defined
+
+# Grant cluster admin permissions to current user
+
+
+# Download istio tar ball
+- name: Download tar archive signature file for Service Mesh
+  get_url:
+      dest: "{{ gkeadm_basedir }}"
+      url: "{{ istio_tar_file_url }}" 
+      #use_proxy: yes # not required. if C(no), it will not use a proxy, even if one is defined in an environment variable on the target hosts.
+      #checksum:  # not required. If a checksum is passed to this parameter, the digest of the destination file will be calculated after it is downloaded to ensure its integrity and verify that the transfer completed successfully. Format: <algorithm>:<checksum|url>, e.g. checksum="sha256:D98291AC[...]B6DC7B97", checksum="sha256:http://example.com/path/sha256sum.txt",If you worry about portability, only the sha1 algorithm is available on all platforms and python versions.,The third party hashlib library can be installed for access to additional algorithms.,Additionally, if a checksum is passed to this parameter, and the file exist under the C(dest) location, the I(destination_checksum) would be calculated, and if checksum equals I(destination_checksum), the file download would be skipped (unless C(force) is true).
+      #tmp_dest: undefined # not required. Absolute path of where temporary file is downloaded to.,When run on Ansible 2.5 or greater, path defaults to ansible's remote_tmp setting,When run on Ansible prior to 2.5, it defaults to C(TMPDIR), C(TEMP) or C(TMP) env variables or a platform specific value.,U(https://docs.python.org/2/library/tempfile.html#tempfile.tempdir)
+  environment: "{{ env }}"
+
+- name: Download tar archive for Service Mesh
+  get_url:
+      dest: "{{ gkeadm_basedir }}"
+      url:  "{{ istio_tar_file_sig }}"
+      #use_proxy: yes # not required. if C(no), it will not use a proxy, even if one is defined in an environment variable on the target hosts.
+      #checksum:  # not required. If a checksum is passed to this parameter, the digest of the destination file will be calculated after it is downloaded to ensure its integrity and verify that the transfer completed successfully. Format: <algorithm>:<checksum|url>, e.g. checksum="sha256:D98291AC[...]B6DC7B97", checksum="sha256:http://example.com/path/sha256sum.txt",If you worry about portability, only the sha1 algorithm is available on all platforms and python versions.,The third party hashlib library can be installed for access to additional algorithms.,Additionally, if a checksum is passed to this parameter, and the file exist under the C(dest) location, the I(destination_checksum) would be calculated, and if checksum equals I(destination_checksum), the file download would be skipped (unless C(force) is true).
+      #tmp_dest: undefined # not required. Absolute path of where temporary file is downloaded to.,When run on Ansible 2.5 or greater, path defaults to ansible's remote_tmp setting,When run on Ansible prior to 2.5, it defaults to C(TMPDIR), C(TEMP) or C(TMP) env variables or a platform specific value.,U(https://docs.python.org/2/library/tempfile.html#tempfile.tempdir)
+  environment: "{{ env }}"
+
+- name: Copy pub key to GKE Admin Workstation
+  become: no
+  copy:
+    src: gcp_public_key.pem
+    dest: "{{ gkeadm_basedir }}/gcp_public_key.pem"
+
+- name: Verify downloaded tar file
+  shell:
+    cmd: >
+      openssl dgst -verify gcp_public_key.pem
+      -signature {{ istio_tar_file_sig | basename }}
+      {{ istio_tar_file_url | basename }}
+  register: verify_istio
+
+- debug:
+    msg: "{{ verify_istio }}"
+    verbosity: 2 
+
+# Extract tarball
+- name: Extract the istio tar file
+  unarchive:
+    src: "{{ istio_tar_file_url | basename }}"
+    dest: "{{ gkeadm_basedir }}"
+    remote_src: yes
+  register: istio_extract
+
+- debug:
+    msg: "{{ istio_extract }}"
+
+# create istio-system namespace
+#   kubectl create namespace istio-system
+
+# copy required root cert into istio-system
+#   kubectl get secret istio-ca-secret --namespace=kube-system --export -o yaml | kubectl apply --validate=false --namespace=istio-system -f -
+
+# Install ASM
+# Permissive mTLS - istioctl manifest apply --set profile=asm-onprem
+# Strict mTLS - istioctl manifest apply --set profile=asm-onprem --set values.global.mtls.enabled=true
+# 
+#  Configure external IP address
+# Integrated - Load Balancer
+#   kubectl edit svc -n istio-system istio-ingressgateway
+#   edit the loadBalancerIP: <your IP> <--- need to do this with a kubectl patch
+# Enable sidecar proxies
+#   kubectl label namespace NAMESPACE istio-injection=enabled --overwrite
