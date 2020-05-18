@@ -67,20 +67,4 @@
 
 - debug:
     msg: "{{ istio_extract }}"
-
-# create istio-system namespace
-#   kubectl create namespace istio-system
-
-# copy required root cert into istio-system
-#   kubectl get secret istio-ca-secret --namespace=kube-system --export -o yaml | kubectl apply --validate=false --namespace=istio-system -f -
-
-# Install ASM
-# Permissive mTLS - istioctl manifest apply --set profile=asm-onprem
-# Strict mTLS - istioctl manifest apply --set profile=asm-onprem --set values.global.mtls.enabled=true
-# 
-#  Configure external IP address
-# Integrated - Load Balancer
-#   kubectl edit svc -n istio-system istio-ingressgateway
-#   edit the loadBalancerIP: <your IP> <--- need to do this with a kubectl patch
-# Enable sidecar proxies
-#   kubectl label namespace NAMESPACE istio-injection=enabled --overwrite
+    verbosity: 2
