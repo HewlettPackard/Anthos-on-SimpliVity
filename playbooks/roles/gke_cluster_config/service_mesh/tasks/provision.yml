@@ -52,10 +52,14 @@
     - KUBECONFIG: "{{ uc_kube_config_file }}"
 
 - name: Deploy Service Mesh package for {{ item.type }} cluster - {{ item.name }}
-  command: |
-    bin/istioctl manifest apply --set profile=asm-onprem
+  shell: 
+    cmd: >
+      bin/istioctl manifest apply --set profile=asm-onprem 
+      --verbose
+      --logtostderr &> {{ log_directory }}/{{ item.name }}-istio_install.log
   args:
     chdir: "{{ gkeadm_basedir }}/{{ service_mesh_version }}"
+    executable: /bin/bash
   environment:
     - KUBECONFIG: "{{ uc_kube_config_file }}"
 
