@@ -11,13 +11,13 @@ vcenter:
   datastore: "{{ item.datastore | default(vcenter.datastore, true) }}"
   cluster: "{{ vcenter.cluster }}"
   network: "{{ gke_network_internal }}"
-  resourcepool: "{{ gke_cluster_resource_pool }}"
+  resourcepool: "{{ item.resource_pool | default(gke_cluster_resource_pool, true)}}"
   # Provide the name for the persistent disk to be used by the deployment (ending
   # in .vmdk). Any directory in the supplied path must be created before deployment.
   # Not required when adding additional user clusters
   datadisk: "{{ gke_data_disk_name }}"
   # Provide the path to vCenter CA certificate pub key for SSL verification
-  cacertpath: "{{ gkeadm_basedir }}/{{ secrets_directory }}/{{ vcenter.cacert }}"
+  cacertpath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ vcenter.cacert }}"
 # Specify the proxy configuration.
 proxy:
   # The URL of the proxy
@@ -39,7 +39,7 @@ usercluster:
   # In-Cluster vCenter configuration
   vcenter:
     # If specified it overwrites the network field in global vcenter configuration
-    network: "{{ gke_user_cluster_network }}"
+    network: "{{ item.cluster_network }}"
   # # The absolute or relative path to the yaml file to use for static IP allocation.
   # # Do not include if using DHCP
 {% if item.gkenode_net.mode == 'static' %}
@@ -77,16 +77,16 @@ usercluster:
   clustername: "{{ item.name }}"
   # User cluster master nodes must have either 1 or 3 replicas
   masternode:
-    cpus: {{ gke_user_cluster_masternode_cpu | default(4) }}
-    memorymb: {{ gke_user_cluster_masternode_memory | default(8192) }}
+    cpus: {{ item.masternode_cpu | default(4) }}
+    memorymb: {{ item.masternode_memory | default(8192) }}
     # How many machines of this type to deploy
-    replicas: {{ gke_user_cluster_masternode_replicas | default(1) }}
+    replicas: {{ item.masternode_replicas | default(1) }}
   # The number of worker nodes to deploy and their size. Min. 3 replicas
   workernode:
-    cpus: {{ gke_user_cluster_workernode_cpu | default(4) }}
-    memorymb: {{ gke_user_cluster_workernode_memory | default(8192) }}
+    cpus: {{ item.workernode_cpu | default(4) }}
+    memorymb: {{ item.workernode_memory | default(8192) }}
     # How many machines of this type to deploy
-    replicas: {{ gke_user_cluster_workernode_replicas | default(3) }}
+    replicas: {{ item.workernode_replicas | default(3) }}
   # The Kubernetes service CIDR range for the cluster
   serviceiprange: 10.96.0.0/12
   # The Kubernetes pod CIDR range for the cluster
@@ -128,23 +128,22 @@ gkeconnect:
   projectid: "{{ gke_connect_projectid | default(gcloud_project, true) }}"
   # The absolute or relative path to the key file for a GCP service account used to
   # register the cluster
-  registerserviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory }}/{{ gke_connectRegister_key }}"
+  registerserviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_connectRegister_key }}"
   # The absolute or relative path to the key file for a GCP service account used by
   # the GKE connect agent
-  agentserviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory }}/{{ gke_connectAgent_key }}"
-  #proxy: "http://u:p@16.100.208.216:8888"
+  agentserviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_connectAgent_key }}"
 # Specify which GCP project to connect your logs and metrics to
 stackdriver:
   projectid: "{{ gke_stackdriver_projectid | default(gcloud_project, true) }}"
   # A GCP region where you would like to store logs and metrics for this cluster.
-  clusterlocation: "{{ gke_cluster_location }}"
-  enablevpc: {{ enable_vpc }}
+  clusterlocation: "{{  item.logging_metric_gcp_region | default(gke_cluster_gcp_region, true) }}"
+  enablevpc: {{ item.enable_vpc | default(enable_vpc) }}
   # The absolute or relative path to the key file for a GCP service account used to
   # send logs and metrics from the cluster
-  serviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory }}/{{ gke_stackdriver_key }}"
+  serviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_stackdriver_key }}"
 # Specify Cloud Run configuration
 cloudrun:
-  enabled: {{ enable_cloudrun }}
+  enabled: {{ item.enable_cloudrun | default(enable_cloudrun) }}
 # # Optionally use a private Docker registry to host GKE images
 {% if private_docker_registry %}
 privateregistryconfig:
@@ -154,7 +153,7 @@ privateregistryconfig:
     username: "{{ private_reg_username }}"
     password: "{{ private_reg_password }}"
 #   # The absolute or relative path to the CA certificate for this registry
-  cacertpath: "{{ gkeadm_basedir }}/{{ secrets_directory }}/{{ private_reg_cert }}"
+  cacertpath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ private_reg_cert }}"
 {% else %}
 # privateregistryconfig:
 #   # Do not include the scheme with your registry address
@@ -167,12 +166,12 @@ privateregistryconfig:
 {% endif %}
 # The absolute or relative path to the GCP service account key that will be used to
 # pull GKE images
-gcrkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory }}/{{ gke_whitelisted_key }}"
+gcrkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_whitelisted_key }}"
 # Configure kubernetes apiserver audit logging
 cloudauditlogging:
   projectid: "{{ gke_cloudauditlogging_projectid | default(gcloud_project, true) }}"
   # A GCP region where you would like to store audit logs for this cluster.
-  clusterlocation: "{{ gcp_region }}"
+  clusterlocation: "{{ item.audit_logging_gcp_region | default(gke_cluster_gcp_region, true) }}"
   # The absolute or relative path to the key file for a GCP service account used to
   # send audit logs from the cluster
-  serviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory }}/{{ gke_auditLogging_key }}"
+  serviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_auditLogging_key }}"

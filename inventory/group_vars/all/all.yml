@@ -147,26 +147,13 @@ gke_cloudauditlogging_projectid: ''
 
 # Common variables to all clusters
 gke_bundle_path: '/var/lib/gke/bundles/gke-onprem-vsphere-{{ anthos_version }}-full.tgz'
-gke_network_internal: 'gke-internal'
-gke_cluster_resource_pool: 'Anthos_1.3'
 gke_data_disk_name: 'test-deploy'
-
-# Admin Cluster variables
-# Variable to override the network setting in vcenter.network for the admin cluster
-gke_admin_cluster_network: ''
-
-# User Cluster variables ## FUTURE: move to gke_cluster_config for PER User cluster templating.
-gke_user_cluster_network: ''
-gke_user_cluster_masternode_cpu: '4'
-gke_user_cluster_masternode_memory: '8192'
-gke_user_cluster_masternode_replicas: '1'
-gke_user_cluster_workernode_cpu: '4'
-gke_user_cluster_workernode_memory: '8192'
-gke_user_cluster_workernode_replicas: '3'
-gke_cluster_location: 'us-east1'
+# These variables will be used for all clusters unless overridden in the gke_cluster_config section below
+gke_network_internal: 'gke-internal' #vSphere network for VM's
+gke_cluster_resource_pool: 'Anthos_1.3'
+gke_cluster_gcp_region: 'us-east1'
 enable_vpc: 'false'
 enable_cloudrun: 'false'
-gcp_region: 'us-east1'
 
 #####
 # GKE on-prem cluster configuration information.
@@ -183,6 +170,12 @@ gke_cluster_config:
       cluster_ctrl_vip: '172.17.0.21'
       cluster_ingress_vip: '172.17.0.22'
       datastore: '' #If left blank the global vcenter.datastore will be used
+      resource_pool: 'Admin-Cluster'
+      cluster_network: ''
+      logging_metric_gcp_region: 'us-east1'
+      audit_logging_gcp_region: 'us-east1'
+      enable_vpc: 'false'
+      enable_cloudrun: 'false'
       gkenode_net:
         mode: 'dhcp'
         dns: '192.168.1.1'
@@ -209,6 +202,12 @@ gke_cluster_config:
     - name: 'sg-test4-13'
       type: 'user'
       state: present
+      masternode_cpu: '6'
+      masternode_memory: '16000'
+      masternode_replicas: '1'
+      workernode_cpu: '6'
+      workernode_memory: '16000'
+      workernode_replicas: '4'
       f5_partition: 'Spanned_VIP_user'
       cluster_ctrl_vip: '172.17.0.69'
       cluster_ingress_vip: '172.17.0.72'
@@ -216,11 +215,15 @@ gke_cluster_config:
       csi_datastore_name: 'csi-3'
       csi_datastore_size: '20'
       datastore: ''
+      resource_pool: 'User-Cluster-1'
+      cluster_network: ''
+      logging_metric_gcp_region: 'us-east1'
+      audit_logging_gcp_region: 'us-east1'
+      enable_vpc: 'false'
+      enable_cloudrun: 'false'
       anthos_service_mesh_enable: true
-      anthos_service_mesh_externalIP: ''  # example '172.17.0.29'
-      anthos_service_mesh_sidecar_enable:  # This a list of namespaces to enable istio sidecar injection
-        - default
-        - kube-public
+      anthos_service_mesh_externalIP: '172.17.0.29'  # example '172.17.0.29'
+      anthos_service_mesh_sidecar_enable: [] # This a list of namespaces to enable istio sidecar injection
       gkenode_net:
         mode: 'dhcp'
         dns: '192.168.2.1'
@@ -247,6 +250,12 @@ gke_cluster_config:
     - name: 'sg-test5-13'
       type: 'user'
       state: present
+      masternode_cpu: ''
+      masternode_memory: ''
+      masternode_replicas: ''
+      workernode_cpu: ''
+      workernode_memory: ''
+      workernode_replicas: ''
       f5_partition: 'user2_VIP'
       cluster_ctrl_vip: '172.17.0.32'
       cluster_ingress_vip: '172.17.0.33'
@@ -254,6 +263,12 @@ gke_cluster_config:
       csi_datastore_name: 'ds1'
       csi_datastore_size: '20'
       datastore: 'csi-2'
+      resource_pool: 'User-Cluster-2'
+      cluster_network: ''
+      logging_metric_gcp_region: 'us-east1'
+      audit_logging_gcp_region: 'us-east1'
+      enable_vpc: 'false'
+      enable_cloudrun: 'false'
       anthos_service_mesh_enable: true
       anthos_service_mesh_externalIP: ''
       anthos_service_mesh_sidecar_enable: # This a list of namespaces to enable istio sidecar injection

@@ -102,4 +102,4 @@
   loop: "{{ item.anthos_service_mesh_sidecar_enable }}"
   loop_control:
     loop_var: namespace
-  when: item.anthos_service_mesh_sidecar_enable
+  when: item.anthos_service_mesh_sidecar_enable | count >0
