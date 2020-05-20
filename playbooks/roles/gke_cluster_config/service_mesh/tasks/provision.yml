@@ -96,9 +96,9 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ namespace | default('default') }}"
+        name: "{{ namespace }}"
         labels:
-          istio_injection: enabled
+          istio-injection: enabled
   loop: "{{ item.anthos_service_mesh_sidecar_enable }}"
   loop_control:
     loop_var: namespace
