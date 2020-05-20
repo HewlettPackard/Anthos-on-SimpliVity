@@ -8,6 +8,7 @@
     dest: /home/{{ ansible_user }}
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+    force: no
     mode: 0600
 
 - name: Debug
@@ -20,12 +21,15 @@
   git:
     repo: "{{ anthos_deploy_git.repo_url }}"
     dest: "/home/{{ ansible_user }}/{{ anthos_deploy_git.repo_name }}"
-    key_file: "/home/{{ ansible_user }}/"
+    #key_file: "/home/{{ ansible_user }}/"
+  when: anthos_deploy_git.pull_enable
 
 # git pull backup data for existing anthos cluster keys and configs
 - name: Pull userdata repo
   become: no
   git:
     repo: "{{ anthos_userdata_git.repo_url }}"
-    dest: "/home/{{ ansible_user }}/{{ anthos_userdata_git.repo_name }}"
-    key_file: "/home/{{ ansible_user }}/"
+    #dest: "/home/{{ ansible_user }}/{{ anthos_userdata_git.repo_name }}"
+    dest: "/home/{{ ansible_user }}/{{ secrets_directory }}"
+    #key_file: "/home/{{ ansible_user }}
+  when: anthos_userdata_git.pull_enable

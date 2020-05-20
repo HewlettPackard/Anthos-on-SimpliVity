@@ -2,8 +2,7 @@
 - name: Get the IP for the current admin WS
   import_tasks: tasks/admin_ws_ip.yml
 
-- name: create directory on admin WS to hold configurations
-  become: false
+- name: Create directories on admin WS to hold output
   file:
     path: "{{ item }}"
     state: directory
@@ -11,16 +10,22 @@
     - "{{ cluster_configurations_path }}" 
     - "{{ cluster_kubeconfig_path }}"
     - "{{ log_directory }}"
+    - "{{ gkeadm_basedir }}/{{ secrets_directory }}"
+
+- name: Copy Anthos Secrets to admin WS
+  copy:
+    src: "{{ secrets_path }}"
+    dest: "{{ gkeadm_basedir }}/{{ secrets_directory }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 - name: Copy cluster configuration files to admin WS
-  become: false
   template:
     src: "{{ item.type }}-cluster-config.yaml.j2"
     dest: "{{ cluster_configurations_path }}/{{ item.name }}.yaml"
   with_items: "{{ gke_cluster_config }}"
 
 - name: Copy cluster IP configuration files to admin WS
-  become: false
   template:
     src: static-ip.yaml.j2
     dest: "{{ cluster_configurations_path }}/{{ item.name }}-ip.yaml"
@@ -28,7 +33,6 @@
   when: "'static' in item.gkenode_net.mode"
 
 - name: Running gkectl prepare to initialize vSphere Environment for Anthos GKE on-prem
-  become: false
   command: >
     gkectl prepare --config {{ cluster_configurations_path }}/{{ item.name }}.yaml
     --log_file ./logs/cluster-{{ item.name }}-prepare.log 
@@ -44,7 +48,6 @@
   delay: 2
 
 - name: Check Anthos GKE on-prem Admin Cluster Configuration
-  become: false
   command: >
     gkectl check-config --config {{ cluster_configurations_path }}/{{ item.name }}.yaml
     --log_file ./logs/cluster-{{ item.name }}-checkconfig.log 
@@ -61,7 +64,6 @@
   delay: 2
 
 - name: Create Anthos GKE on-prem Admin Cluster 
-  become: false
   command: >
     gkectl create cluster --config {{ cluster_configurations_path }}/{{ item.name }}.yaml
     --kubeconfig-out {{ cluster_kubeconfig_path }}/{{ admin_cluster_kubeconfig }} 
@@ -89,7 +91,6 @@
     verbosity: 3
 
 - name: Check Anthos GKE on-prem User Cluster Configuration
-  become: false
   command: >
     gkectl check-config --kubeconfig {{ cluster_kubeconfig_path }}/{{ admin_cluster_kubeconfig }} 
     --config {{ cluster_configurations_path }}/{{ item.name }}.yaml
@@ -107,7 +108,6 @@
   delay: 2
 
 - name: Create Anthos GKE on-prem User Cluster
-  become: false
   command: >
     gkectl create cluster --kubeconfig {{ cluster_kubeconfig_path }}/{{ admin_cluster_kubeconfig }}
     --config {{ cluster_configurations_path }}/{{ item.name }}.yaml
@@ -126,7 +126,7 @@
 - name: Output Cluster Create Status FULL
   debug:
     msg: "{{ gke_user_cluster_create }}" 
-    verbosity: 3
+    verbosity: 2
 
 - name: Output Cluster Create Status Parsed
   debug:
