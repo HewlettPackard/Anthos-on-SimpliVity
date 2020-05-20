@@ -99,16 +99,24 @@ no_proxy: '.hcilabs.hpecorp.net,.simplivt.local'
 # Used for git repo cloning.
 ssh_config_path: '{{ local_user_home }}/.ssh'
 
-# Path to repos to pull after deployment. Do not change anthos_deploy_git, but update the anthos_userdata_git entry.
+# Path to the main anthos-on-simplivity repo. This will be pulled to the GKE Admin workstation if 'pull_enable: true'.
+# The intent is to have customer useful scripts included in the repo to be used after GKE on-prem deployment.
 anthos_deploy_git:
   pull_enable: true
-  repo_name: anthos_wrkstation_files
-  repo_url: 'ssh://git@stash.simplivt.local:7999/soleng/anthos_wrkstation_files.git'
+# This is currently set to the internal bitbucket copy of the repo since we (Mythbusters) cannot pull from github.
+# The ability to pull automatically requires a 'config' file and ssh key present in the local (ansible controller) user's
+# /home/.ssh directory
+  repo_name: anthos-on-simplivity
+  repo_url: 'ssh://git@stash.simplivt.local:7999/soleng/anthos-on-simplivity.git'
+
+# If desired, secrets can be pulled from git to the ansible controller by setting 'pull_enable: true'.  The files will be copied to the
+# GKE Admin Workstation during deployment. The files in this repo must match the name/structure described in README.md.
+# As mentioned above, an ssh 'config' file and ssh key need to be configured to pull this repo.
 anthos_userdata_git:
   pull_enable: false
-  repo_name: gke_admin_wrkst_private
+  repo_name: anthos_secrets # Change to match your repo -- Files will be pulled to {{ secrets_directory }}
 # Change this url to match your private user data repo path
-  repo_url: 'ssh://git@stash.simplivt.local:7999/~sgifford/gke_admin_wrkst_private.git'
+  repo_url: 'ssh://git@stash.simplivt.local:7999/~sgifford/anthos_secrets.git'
 
 #####
 # Varibles defining the directory configuration on the GKE Admin Workstation.
