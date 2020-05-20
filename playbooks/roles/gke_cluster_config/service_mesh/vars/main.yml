@@ -1,0 +1,8 @@
+---
+# vars file for service-mesh
+
+service_mesh_namespace: istio-system
+service_mesh_version: 'istio-1.4.9-asm.1'
+
+istio_tar_file_url: https://storage.googleapis.com/gke-release/asm/{{ service_mesh_version }}-linux.tar.gz
+istio_tar_file_sig: https://storage.googleapis.com/gke-release/asm/{{ service_mesh_version }}-linux.tar.gz.1.sig

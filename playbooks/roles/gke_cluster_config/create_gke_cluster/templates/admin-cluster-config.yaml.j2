@@ -11,13 +11,13 @@ vcenter:
   datastore: "{{ item.datastore | default(vcenter.datastore, true) }}"
   cluster: "{{ vcenter.cluster }}"
   network: "{{ gke_network_internal }}"
-  resourcepool: "{{ gke_cluster_resource_pool }}"
+  resourcepool: "{{ item.resource_pool | default(gke_cluster_resource_pool, true) }}"
   # Provide the name for the persistent disk to be used by the deployment (ending
   # in .vmdk). Any directory in the supplied path must be created before deployment.
   # Not required when adding additional user clusters
   datadisk: "{{ gke_data_disk_name }}"
   # Provide the path to vCenter CA certificate pub key for SSL verification
-  cacertpath: "{{ vcenter.cacertpath_gkectl }}"
+  cacertpath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ vcenter.cacert }}"
 # Specify the proxy configuration.
 proxy:
   # The URL of the proxy
@@ -38,7 +38,7 @@ admincluster:
   # In-Cluster vCenter configuration
   vcenter:
     # If specified it overwrites the network field in global vcenter configuration
-    network: "{{ gke_admin_cluster_network }}"
+    network: "{{ item.cluster_network }}"
   # # The absolute or relative path to the yaml file to use for static IP allocation.
   # # Do not include if using DHCP
 {% if item.gkenode_net.mode == 'static' %}
@@ -84,26 +84,25 @@ admincluster:
 lbmode: Integrated
 # Specify which GCP project to connect your GKE clusters to
 gkeconnect:
-  projectid: "{{ gcloud_project }}"
+  projectid: "{{ gke_connect_projectid | default(gcloud_project, true) }}"
   # The absolute or relative path to the key file for a GCP service account used to
   # register the cluster
-  registerserviceaccountkeypath: "{{ gke_register_sa_keypath }}"
+  registerserviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_connectRegister_key }}"
   # The absolute or relative path to the key file for a GCP service account used by
   # the GKE connect agent
-  agentserviceaccountkeypath: "{{ gke_agent_sa_keypath }}"
-  #proxy: "http://u:p@16.100.208.216:8888"
-# Specify which GCP project to connect your logs and metrics to
+  agentserviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_connectAgent_key }}"
+# Specify which GCP project to connect your logs and metrics t
 stackdriver:
-  projectid: "{{ gcloud_project }}"
+  projectid: "{{ gke_stackdriver_projectid | default(gcloud_project, true) }}"
   # A GCP region where you would like to store logs and metrics for this cluster.
-  clusterlocation: "{{ gke_cluster_location }}"
-  enablevpc: {{ enable_vpc }}
+  clusterlocation: "{{ item.logging_metric_gcp_region | default(gke_cluster_gcp_region, true) }}"
+  enablevpc: {{ item.enable_vpc | default(enable_vpc)  }}
   # The absolute or relative path to the key file for a GCP service account used to
   # send logs and metrics from the cluster
-  serviceaccountkeypath: "{{ gke_stackdriver_sa_keypath }}"
+  serviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_stackdriver_key }}"
 # Specify Cloud Run configuration
 cloudrun:
-  enabled: {{ enable_cloudrun }}
+  enabled: {{ item.enable_cloudrun | default(enable_cloudrun) }}
 # # Optionally use a private Docker registry to host GKE images
 {% if private_docker_registry %}
 privateregistryconfig:
@@ -113,7 +112,7 @@ privateregistryconfig:
     username: "{{ private_reg_username }}"
     password: "{{ private_reg_password }}"
 #   # The absolute or relative path to the CA certificate for this registry
-  cacertpath: "{{ private_reg_cert_path_gkectl }}"
+  cacertpath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ private_reg_cert }}"
 {% else %}
 # privateregistryconfig:
 #   # Do not include the scheme with your registry address
@@ -126,12 +125,12 @@ privateregistryconfig:
 {% endif %}
 # The absolute or relative path to the GCP service account key that will be used to
 # pull GKE images
-gcrkeypath: "{{ gke_whitelisted_keypath }}"
+gcrkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_whitelisted_key }}"
 # Configure kubernetes apiserver audit logging
 cloudauditlogging:
-  projectid: "{{ gcloud_project }}"
+  projectid: "{{ gke_cloudauditlogging_projectid | default(gcloud_project, true) }}"
   # A GCP region where you would like to store audit logs for this cluster.
-  clusterlocation: "{{ gcp_region }}"
+  clusterlocation: "{{ item.audit_logging_gcp_region | default(gke_cluster_gcp_region, true) }}"
   # The absolute or relative path to the key file for a GCP service account used to
   # send audit logs from the cluster
-  serviceaccountkeypath: "{{ gke_auditlogging_sa_keypath }}"
+  serviceaccountkeypath: "{{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_auditLogging_key }}"

@@ -46,6 +46,7 @@
   failed_when: false
 
 - name: Create input file for gkeadm for creating GKE Admin workstation
+  become: false
   template:
     src: admin-ws-config.yaml.j2
     dest: "{{ gkeadm_config }}"

@@ -1,0 +1,14 @@
+---
+# tasks file for csi
+
+- name: Get the IP for the current admin WS
+  import_tasks: tasks/admin_ws_ip.yml
+
+- include_tasks: prep_service_mesh.yml
+
+- name: Loop over user clusters to install service mesh
+  include_tasks: provision.yml
+  loop: "{{ gke_cluster_config }}"
+  when: 
+    - item.type == "user"
+    - item.anthos_service_mesh_enable

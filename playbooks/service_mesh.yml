@@ -4,4 +4,4 @@
   gather_facts: false
 
   roles:
-    - role: gke_cluster_config/create_gke_cluster
+    - role: gke_cluster_config/service_mesh
