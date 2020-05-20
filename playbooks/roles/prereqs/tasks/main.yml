@@ -4,11 +4,14 @@
   include_tasks:
       file: tasks/prereq_for_download.yml
 
-- name: Create Output directory
+- name: Create required directories
   become: false 
   file:
-    path: "{{ output_directory }}"
+    path: "{{ item }}"
     state: directory
+  with_items:
+      - "{{ output_directory }}"
+      - "{{ secrets_path }}"
 
 - name: Clear env if proxyUrl is not defined
   set_fact:
@@ -97,7 +100,7 @@
 - name: Activate GCP whitelisted key
   become: false
   command: |
-    gcloud auth activate-service-account --project {{ gcloud_project }} --key-file {{ gke_whitelisted_keypath }}
+    gcloud auth activate-service-account --project {{ gcloud_project }} --key-file {{ secrets_path }}/{{ gke_whitelisted_key | default('whitelisted-key.json') }}
 
 - name: Configure gcloud required apis
   become: false

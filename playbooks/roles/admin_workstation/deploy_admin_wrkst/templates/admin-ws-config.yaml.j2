@@ -1,6 +1,6 @@
 gcp:
   # Path of the whitelisted service account's JSON key file
-  whitelistedServiceAccountKeyPath: "{{ gke_whitelisted_keypath }}"
+  whitelistedServiceAccountKeyPath: "{{ secrets_path }}/{{ gke_whitelisted_key | default('whitelisted-key.json') }}"
 # Specify which vCenter resources to use
 vCenter:
 {% if gke_admin_workstation.alt_vcenter.enable %}
@@ -15,7 +15,7 @@ vCenter:
   network: "{{ gke_admin_workstation.alt_vcenter.network }}"
   resourcePool: "{{ gke_admin_workstation.alt_vcenter.resourcepool }}"
   # Provide the path to vCenter CA certificate pub key for SSL verification
-  caCertPath: "{{ gke_admin_workstation.alt_vcenter.cacertpath_gkeadm }}"
+  caCertPath: "{{ secrets_path }}/{{ gke_admin_workstation.alt_vcenter.cacert }}"
 {% else %}
   # The credentials and address GKE On-Prem should use to connect to vCenter
   credentials:
@@ -28,7 +28,7 @@ vCenter:
   network: "{{ vcenter.network }}"
   resourcePool: "{{ vcenter.resourcepool }}"
   # Provide the path to vCenter CA certificate pub key for SSL verification
-  caCertPath: "{{ vcenter.cacertpath_gkeadm }}"
+  caCertPath: "{{ secrets_path }}/{{ vcenter.cacert }}"
 {% endif %}
 # The URL of the proxy for the jump host
 {% if gke_admin_workstation.proxyUrl is defined and gke_admin_workstation.proxyUrl | length %}

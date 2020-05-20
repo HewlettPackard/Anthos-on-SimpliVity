@@ -8,6 +8,7 @@ idna==2.9
 jmespath==0.9.4
 Jinja2==2.11.1
 MarkupSafe==1.1.1
+netaddr==0.7.19 
 prompt-toolkit==3.0.5
 pycparser==2.20
 pyflakes==2.1.1
