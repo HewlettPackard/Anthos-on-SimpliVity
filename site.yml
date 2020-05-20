@@ -5,3 +5,4 @@
 - import_playbook: playbooks/deploy_admin_wrkst.yml
 - import_playbook: playbooks/create_cluster.yml
 - import_playbook: playbooks/csi.yml
+- import_playbook: playbooks/service_mesh.yml
