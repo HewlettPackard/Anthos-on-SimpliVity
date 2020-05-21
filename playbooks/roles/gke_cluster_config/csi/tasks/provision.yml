@@ -51,8 +51,8 @@
 - name: Set variables specific to HPESVT CSI Driver
   set_fact:
     csi_controller_rbac: "svt-csi-controller-rbac.yaml"
-    csi_controller_deployment: "svt-csi-controller-deployment.yaml"
-    csi_controller_node_ds: "svt-csi-node-ds.yaml"
+    csi_controller_deployment: "svt-csi-controller-deployment.yaml.j2"
+    csi_controller_node_ds: "svt-csi-node-ds.yaml.j2"
     csi_provisioner: "csi.simplivity.hpe.com"
   when: csi_driver == "hpesvt"
 
@@ -68,14 +68,14 @@
     state: present
     validate_certs: true
     kubeconfig: "{{ uc_kube_config_file }}"
-    definition: "{{ lookup('file','{{ csi_controller_deployment }}') }}"
+    definition: "{{ lookup('template','{{ csi_controller_deployment }}') }}"
 
 - name: Create CSI DaemonSet for {{ item.type }} cluster - {{ item.name }}
   k8s:
     state: present
     validate_certs: true
     kubeconfig: "{{ uc_kube_config_file }}"
-    definition: "{{ lookup('file','{{ csi_controller_node_ds }}') }}"
+    definition: "{{ lookup('template','{{ csi_controller_node_ds }}') }}"
 
 - name: See if the CSI Storage Class exists for {{ item.type }} cluster - {{ item.name }}
   k8s_info:

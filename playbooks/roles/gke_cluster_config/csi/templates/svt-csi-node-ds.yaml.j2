@@ -43,7 +43,7 @@ spec:
             - name: registration-dir
               mountPath: /registration
         - name: svt-csi-node
-          image: 16.100.209.193:5005/svt-csi-driver:v0.8.5
+          image: {{ svt_csi_driver_image }}
           imagePullPolicy: "Always"
           env:
             - name: NODE_NAME

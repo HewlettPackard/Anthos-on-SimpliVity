@@ -59,7 +59,7 @@ spec:
             - mountPath: /csi
               name: socket-dir
         - name: svt-csi-controller
-          image: 16.100.209.193:5005/svt-csi-driver:v0.8.5
+          image: {{ svt_csi_driver_image }}
           lifecycle:
             preStop:
               exec:
@@ -103,7 +103,7 @@ spec:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
         - name: vsphere-syncer
-          image: 16.100.209.193:5005/svt-csi-syncer:v0.8.1
+          image: {{ svt_csi_syncer_image }}
           args:
             - "--v=2"
           imagePullPolicy: "Always"
