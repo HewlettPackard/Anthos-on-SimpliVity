@@ -68,4 +68,4 @@
     mode: 0600
   when: 
     - "'local' in group_names"
-    - git_secrets.stat.isdir
+    - git_secrets.stat.exists
