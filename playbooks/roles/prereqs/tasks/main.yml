@@ -15,10 +15,6 @@
 ###                                                                             
 ---
 # tasks file for prereqs
-- name: Check filesystem
-  include_tasks:
-      file: tasks/prereq_for_download.yml
-
 - name: Create required directories
   become: false 
   file:
@@ -31,7 +27,7 @@
 - name: Clear env if proxyUrl is not defined
   set_fact:
     env: {}
-  when: gke_admin_workstation.proxyUrl is not defined
+  when: not proxy_enabled
 
 - name: Set env if proxyUrl is defined
   set_fact:
@@ -39,7 +35,7 @@
       http_proxy: "{{ gke_admin_workstation.proxyUrl }}"
       https_proxy: "{{ gke_admin_workstation.proxyUrl }}"
       no_proxy: "{{ no_proxy }}"
-  when: gke_admin_workstation.proxyUrl is defined
+  when: proxy_enabled
 
 - name: Install Google repo file for Debian
   vars:
@@ -104,13 +100,19 @@
   environment: "{{ env }}"
   when: ansible_os_family == 'RedHat'
 
-- name: Configure gcloud project and proxy
+- name: Configure gcloud project
   become: false
   shell: |
     gcloud config set project "{{ gcloud_project }}"
+
+- name: Configure gcloud project and proxy
+  become: false
+  shell: |
     gcloud config set proxy/type "{{ proxy_type }}"
     gcloud config set proxy/address "{{ proxy_address }}"
     gcloud config set proxy/port "{{ proxy_port }}"
+  when:
+    - proxy_enabled
 
 - name: Activate GCP whitelisted key
   become: false

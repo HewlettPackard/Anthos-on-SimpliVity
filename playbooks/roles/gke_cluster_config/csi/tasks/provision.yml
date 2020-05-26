@@ -19,7 +19,7 @@
 - name: Clear env if proxyUrl is not defined
   set_fact:
     env: {}
-  when: gke_admin_workstation.proxyUrl is not defined
+  when: not proxy_enabled
 
 - name: Set env if proxyUrl is defined
   set_fact:
@@ -27,7 +27,7 @@
       http_proxy: "{{ gke_admin_workstation.proxyUrl }}"
       https_proxy: "{{ gke_admin_workstation.proxyUrl }}"
       no_proxy: "{{ no_proxy }}"
-  when: gke_admin_workstation.proxyUrl is defined
+  when: proxy_enabled
 
 - set_fact:
     uc_kube_config_file: "{{ cluster_kubeconfig_path }}/{{ item.name }}-{{ admin_cluster_kubeconfig }}"

@@ -22,7 +22,7 @@
 - name: Clear env if proxyUrl is not defined
   set_fact:
     env: {}
-  when: gke_admin_workstation.proxyUrl is not defined
+  when: not proxy_enabled
 
 - name: Set env if proxyUrl is defined
   set_fact:
@@ -30,7 +30,7 @@
       http_proxy: "{{ gke_admin_workstation.proxyUrl }}"
       https_proxy: "{{ gke_admin_workstation.proxyUrl }}"
       no_proxy: "{{ no_proxy }}"
-  when: gke_admin_workstation.proxyUrl is defined
+  when: proxy_enabled
 
 # Grant cluster admin permissions to current user
 

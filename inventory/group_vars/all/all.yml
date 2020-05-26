@@ -49,7 +49,8 @@ vcenter:
 #####
 gke_admin_workstation:
   ssh_private_key: 'vsphere_workstation' # Must be in directory defined by 'secrets_directory'
-  proxyUrl: 'http://16.100.211.43:8888'
+  #proxyUrl: 'http://16.100.211.43:8888'
+  proxyUrl: "{{ proxy_type }}://{{ proxy_address }}:{{ proxy_port }}" # Proxy vars defined elsewhere in this file.
   name: 'gke-adm-test'
   cpus: '4'
   memoryMB: '8192'
@@ -107,6 +108,7 @@ private_reg_username: 'me'
 private_reg_password: 'you'
 
 # Proxy definitions -- gkeadm will have it's own. For now these are needed for post deploy configuration
+proxy_enabled: true
 proxy_address: '16.100.208.216'
 proxy_port: '8888'
 proxy_type: 'http'
