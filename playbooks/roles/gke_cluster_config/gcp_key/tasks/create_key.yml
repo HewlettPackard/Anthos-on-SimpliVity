@@ -14,12 +14,7 @@
 # limitations under the License.                                                
 ###                                                                             
 ---
-
-- import_playbook: playbooks/get_prereq.yml
-- import_playbook: playbooks/gcp_key_create.yml
-  when: false # force skip for now
-- import_playbook: playbooks/bigip_anthos.yml
-- import_playbook: playbooks/deploy_admin_wrkst.yml
-- import_playbook: playbooks/create_cluster.yml
-- import_playbook: playbooks/csi.yml
-- import_playbook: playbooks/service_mesh.yml
+- name: Create json key
+  shell: >
+    gcloud iam service-accounts keys create {{ secrets_path }}/{{ item.key_filename }}
+    --iam-account  {{ item.name }}@{{ item.project }}.{{item.email }}

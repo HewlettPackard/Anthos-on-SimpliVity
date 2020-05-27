@@ -14,12 +14,22 @@
 # limitations under the License.                                                
 ###                                                                             
 ---
+# tasks file for gcp_key
 
-- import_playbook: playbooks/get_prereq.yml
-- import_playbook: playbooks/gcp_key_create.yml
-  when: false # force skip for now
-- import_playbook: playbooks/bigip_anthos.yml
-- import_playbook: playbooks/deploy_admin_wrkst.yml
-- import_playbook: playbooks/create_cluster.yml
-- import_playbook: playbooks/csi.yml
-- import_playbook: playbooks/service_mesh.yml
+- name: Pull in default key names
+  include_vars:
+     file: ../create_gke_cluster/defaults/main.yml
+
+- name: Create GCP service accounts
+  include_tasks: create_account.yml
+  loop: "{{ default_gcp_svc_accounts }}"
+  when: anthos_init | default(false)
+
+- name: Assign Roles to GCP service accounts
+  include_tasks: assign_roles.yml
+  loop: "{{ default_gcp_svc_accounts }}"
+      
+- name: Create json keys for GCP svc accounts
+  include_tasks: create_key.yml
+  loop: "{{ default_gcp_svc_accounts }}"
+      

@@ -14,12 +14,9 @@
 # limitations under the License.                                                
 ###                                                                             
 ---
+- hosts: localhost
+  become: no
+  gather_facts: false
 
-- import_playbook: playbooks/get_prereq.yml
-- import_playbook: playbooks/gcp_key_create.yml
-  when: false # force skip for now
-- import_playbook: playbooks/bigip_anthos.yml
-- import_playbook: playbooks/deploy_admin_wrkst.yml
-- import_playbook: playbooks/create_cluster.yml
-- import_playbook: playbooks/csi.yml
-- import_playbook: playbooks/service_mesh.yml
+  roles:
+    - role: gke_cluster_config/gcp_key

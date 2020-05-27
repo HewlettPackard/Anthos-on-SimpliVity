@@ -14,12 +14,12 @@
 # limitations under the License.                                                
 ###                                                                             
 ---
-
-- import_playbook: playbooks/get_prereq.yml
-- import_playbook: playbooks/gcp_key_create.yml
-  when: false # force skip for now
-- import_playbook: playbooks/bigip_anthos.yml
-- import_playbook: playbooks/deploy_admin_wrkst.yml
-- import_playbook: playbooks/create_cluster.yml
-- import_playbook: playbooks/csi.yml
-- import_playbook: playbooks/service_mesh.yml
+- name: Assign Roles to service accounts
+  shell: >
+    gcloud projects add-iam-policy-binding {{ item.project }} 
+    --member "serviceAccount:{{ item.name }}@{{ item.project }}.{{item.email }}"
+    --role {{ roles }}
+  loop: "{{ item.roles }}"
+  loop_control:
+    loop_var: roles
+  when: item.roles | count >0
