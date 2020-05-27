@@ -31,3 +31,4 @@
     groups:
       - anthos_admin
     ansible_host: "{{ gke_adm_wrkst_ip_ff | join('.') }}"
+  when: "'anthos_admin' in group_names"
