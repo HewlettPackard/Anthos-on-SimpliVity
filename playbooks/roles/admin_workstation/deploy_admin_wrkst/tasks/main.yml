@@ -15,11 +15,10 @@
 ###                                                                             
 ---
 # tasks file for deploy_admin_wrkst
-- name: Include the filesytem check for gkeadm requirements
-  import_tasks: tasks/prereq_for_download.yml
 
 - name: Check if gke admin workstation exists using global vcenter config
   become: false
+  delegate_to: localhost
   vmware_guest_info:
     hostname: "{{ vcenter.address }}"
     username: "{{ vcenter.username }}"
@@ -65,10 +64,6 @@
   template:
     src: admin-ws-config.yaml.j2
     dest: "{{ gkeadm_config }}"
-
-- debug:
-    msg: "Flag for gkeadm to download OVA is {{ gkeadm_download_ova }}"
-    verbosity: 2
 
 - name: Use Google gkeadm to deploy gke admin workstation using pre-downloaded OVA
   become: false
