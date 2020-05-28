@@ -111,8 +111,7 @@
     gcloud config set proxy/type "{{ proxy_type }}"
     gcloud config set proxy/address "{{ proxy_address }}"
     gcloud config set proxy/port "{{ proxy_port }}"
-  when:
-    - proxy_enabled
+  when: proxy_enabled
 
 - name: Activate GCP whitelisted key
   become: false
