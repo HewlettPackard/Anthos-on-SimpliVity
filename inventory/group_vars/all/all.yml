@@ -22,8 +22,8 @@ anthos_version: '1.3.0-gke.16'
 # vcenter(s) ssl certificates
 # private docker registry certificates
 # ssh keypair to be deployed to GKE Admin Workstation
-# This directory is located under /home/<user> on the ansible controller must terminate with a '/'
-secrets_directory: 'anthos_secrets/'
+# This directory is located under /home/<user> on the ansible controller.
+secrets_directory: 'anthos_secrets'
 
 # Name of whitelisted key for GCP
 gke_whitelisted_key: 'whitelisted-key.json' # Must be in directory defined by 'secrets_directory'
@@ -49,7 +49,6 @@ vcenter:
 #####
 gke_admin_workstation:
   ssh_private_key: 'vsphere_workstation' # Must be in directory defined by 'secrets_directory'
-  #proxyUrl: 'http://16.100.211.43:8888'
   proxyUrl: "{{ proxy_type }}://{{ proxy_address }}:{{ proxy_port }}" # Proxy vars defined elsewhere in this file.
   name: 'gke-adm-test'
   cpus: '4'
@@ -121,7 +120,7 @@ ssh_config_path: '{{ local_user_home }}/.ssh'
 # Path to the main anthos-on-simplivity repo. This will be pulled to the GKE Admin workstation if 'pull_enable: true'.
 # The intent is to have customer useful scripts included in the repo to be used after GKE on-prem deployment.
 anthos_deploy_git:
-  pull_enable: true
+  pull_enable: false
 # This is currently set to the internal bitbucket copy of the repo since we (Mythbusters) cannot pull from github.
 # The ability to pull automatically requires a 'config' file and ssh key present in the local (ansible controller) user's
 # /home/.ssh directory
@@ -150,7 +149,7 @@ output_directory: '{{ local_user_home }}/output'
 log_directory: '{{ gkeadm_basedir }}/logs'
 # Location of secrets files on local ansible controller
 local_user_home: "{{ lookup ('env', 'HOME') }}"
-secrets_path: '{{ local_user_home }}/{{ secrets_directory }}'
+secrets_path: "{{ local_user_home }}/{{ secrets_directory | regex_replace('\\/$', '') }}"
 # GKE Admin Workstation destination of admin and user cluster configuration yaml files. 
 cluster_configurations_path: '{{ gkeadm_basedir }}/cluster-configurations'
 # GKE Admin Workstation destination of admin and user cluster kubeconfig files generated when gkectl deploys clusters
@@ -164,7 +163,8 @@ admin_cluster_kubeconfig: 'kubeconfig'
 
 # GCP project to set.  gkeadm does not currently set this.
 # gcloud_project is a default (main) project.
-gcloud_project: 'deep-thought-259715'
+gcloud_project: 'GCP_Project_ID'
+
 # Individual projects can be configured for each of these areas.  Projects must exist in
 # GCP before trying to use them.  They will default to gcloud_project if left undefined.
 gke_connect_projectid: ''
