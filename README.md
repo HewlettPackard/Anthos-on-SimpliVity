@@ -29,6 +29,22 @@ The playbooks currently depend on having a whitelisted service account key file 
 
 [Google instructions for creating a whitelisted account JSON file](https://cloud.google.com/anthos/gke/docs/on-prem/how-to/service-accounts#whitelisted_service_account)
 
+## New GCP Service Account Creation Playbook
+
+A new playbook/role have been added that will create all the initial GCP service accounts (except for the whitelisted key), assign required roles and download json keys for each.  These accounts are listed below under Sensitive Information section.
+
+Dependencies:
+
+* GCP project must exist and whitelisted key client_email must be added to project with the following role(s)
+  * hpe-svt-sa@active-module-235013.iam.gserviceaccount.com 'Service Account Key Admin'
+* All vars in all.yml should be edited to reflect your desired state.
+* [secrets_directory] must exist
+* whitelisted_key.json file must reside in [secrets_directory]
+
+Execution of the role is done by running `ansible-playbook playbooks/gcp_key_create.yml --ask-vault-pass`
+
+* The `prereq` role will be executed as a dependency during the playbook execution.
+
 ---
 
 ## Installing Ansible
@@ -38,6 +54,7 @@ The use of a Python Virtual environment allows for flexibility in ansible host c
 The provided script `prerequisites/ansible-setup.sh` will build the python virtualenv needed to execute the playbooks.  
 
 NOTE: You may need to modify the following proxy settings in the ansible-setup.sh script based on your environment:
+
 ```text
 HTTPS_PROXY="HTTPS_PROXY=http://16.100.211.43:8888"
 needs_proxy=true
