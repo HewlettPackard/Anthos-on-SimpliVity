@@ -15,6 +15,7 @@
 ###                                                                             
 ---
 - name: Assign Roles to service accounts
+  become: no
   shell: >
     gcloud projects add-iam-policy-binding {{ item.project }} 
     --member "serviceAccount:{{ item.name }}@{{ item.project }}.{{item.email }}"

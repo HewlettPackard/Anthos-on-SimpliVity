@@ -15,5 +15,6 @@
 ###                                                                             
 ---
 - name: Create GCP accounts
+  become: no
   shell: >
     gcloud iam service-accounts create {{ item.name }} --project {{ item.project }} --verbosity debug

@@ -15,8 +15,8 @@
 ###                                                                             
 ---
 - hosts: localhost
-  become: no
-  gather_facts: false
+  become: yes
+  gather_facts: true
 
   roles:
     - role: gke_cluster_config/gcp_key

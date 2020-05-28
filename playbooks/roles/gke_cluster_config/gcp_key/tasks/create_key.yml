@@ -15,6 +15,7 @@
 ###                                                                             
 ---
 - name: Create json key
+  become: no
   shell: >
     gcloud iam service-accounts keys create {{ secrets_path }}/{{ item.key_filename }}
     --iam-account  {{ item.name }}@{{ item.project }}.{{item.email }}

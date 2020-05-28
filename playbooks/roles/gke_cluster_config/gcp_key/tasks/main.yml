@@ -23,7 +23,7 @@
 - name: Create GCP service accounts
   include_tasks: create_account.yml
   loop: "{{ default_gcp_svc_accounts }}"
-  when: anthos_init | default(false)
+  #when: anthos_init | default(false)
 
 - name: Assign Roles to GCP service accounts
   include_tasks: assign_roles.yml
