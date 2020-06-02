@@ -13,10 +13,9 @@
 # See the License for the specific language governing permissions and           
 # limitations under the License.                                                
 ###                                                                             
---
-- name: Save the running configuration of the BIG-IP
-  bigip_config:
-    reset: yes
-    save: yes
-    provider: "{{ f5.provider }}"
-  delegate_to: localhost
+---
+- name: Create json key
+  become: no
+  shell: >
+    gcloud iam service-accounts keys create {{ secrets_path }}/{{ item.key_filename }}
+    --iam-account  {{ item.name }}@{{ item.project }}.{{item.email }}

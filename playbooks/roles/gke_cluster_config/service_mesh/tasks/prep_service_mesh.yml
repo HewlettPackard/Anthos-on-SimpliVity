@@ -1,3 +1,18 @@
+###                                                                             
+# Copyright (2020) Hewlett Packard Enterprise Development LP                    
+#                                                                               
+# Licensed under the Apache License, Version 2.0 (the "License");               
+# You may not use this file except in compliance with the License.              
+# You may obtain a copy of the License at                                       
+#                                                                               
+# http://www.apache.org/licenses/LICENSE-2.0                                    
+#                                                                               
+# Unless required by applicable law or agreed to in writing, software           
+# distributed under the License is distributed on an "AS IS" BASIS,             
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.      
+# See the License for the specific language governing permissions and           
+# limitations under the License.                                                
+###                                                                             
 ---
 # tasks file for service-mesh
 
@@ -7,7 +22,7 @@
 - name: Clear env if proxyUrl is not defined
   set_fact:
     env: {}
-  when: gke_admin_workstation.proxyUrl is not defined
+  when: not proxy_enabled
 
 - name: Set env if proxyUrl is defined
   set_fact:
@@ -15,7 +30,7 @@
       http_proxy: "{{ gke_admin_workstation.proxyUrl }}"
       https_proxy: "{{ gke_admin_workstation.proxyUrl }}"
       no_proxy: "{{ no_proxy }}"
-  when: gke_admin_workstation.proxyUrl is defined
+  when: proxy_enabled
 
 # Grant cluster admin permissions to current user
 
@@ -25,18 +40,12 @@
   get_url:
       dest: "{{ gkeadm_basedir }}"
       url: "{{ istio_tar_file_url }}" 
-      #use_proxy: yes # not required. if C(no), it will not use a proxy, even if one is defined in an environment variable on the target hosts.
-      #checksum:  # not required. If a checksum is passed to this parameter, the digest of the destination file will be calculated after it is downloaded to ensure its integrity and verify that the transfer completed successfully. Format: <algorithm>:<checksum|url>, e.g. checksum="sha256:D98291AC[...]B6DC7B97", checksum="sha256:http://example.com/path/sha256sum.txt",If you worry about portability, only the sha1 algorithm is available on all platforms and python versions.,The third party hashlib library can be installed for access to additional algorithms.,Additionally, if a checksum is passed to this parameter, and the file exist under the C(dest) location, the I(destination_checksum) would be calculated, and if checksum equals I(destination_checksum), the file download would be skipped (unless C(force) is true).
-      #tmp_dest: undefined # not required. Absolute path of where temporary file is downloaded to.,When run on Ansible 2.5 or greater, path defaults to ansible's remote_tmp setting,When run on Ansible prior to 2.5, it defaults to C(TMPDIR), C(TEMP) or C(TMP) env variables or a platform specific value.,U(https://docs.python.org/2/library/tempfile.html#tempfile.tempdir)
   environment: "{{ env }}"
 
 - name: Download tar archive for Service Mesh
   get_url:
       dest: "{{ gkeadm_basedir }}"
       url:  "{{ istio_tar_file_sig }}"
-      #use_proxy: yes # not required. if C(no), it will not use a proxy, even if one is defined in an environment variable on the target hosts.
-      #checksum:  # not required. If a checksum is passed to this parameter, the digest of the destination file will be calculated after it is downloaded to ensure its integrity and verify that the transfer completed successfully. Format: <algorithm>:<checksum|url>, e.g. checksum="sha256:D98291AC[...]B6DC7B97", checksum="sha256:http://example.com/path/sha256sum.txt",If you worry about portability, only the sha1 algorithm is available on all platforms and python versions.,The third party hashlib library can be installed for access to additional algorithms.,Additionally, if a checksum is passed to this parameter, and the file exist under the C(dest) location, the I(destination_checksum) would be calculated, and if checksum equals I(destination_checksum), the file download would be skipped (unless C(force) is true).
-      #tmp_dest: undefined # not required. Absolute path of where temporary file is downloaded to.,When run on Ansible 2.5 or greater, path defaults to ansible's remote_tmp setting,When run on Ansible prior to 2.5, it defaults to C(TMPDIR), C(TEMP) or C(TMP) env variables or a platform specific value.,U(https://docs.python.org/2/library/tempfile.html#tempfile.tempdir)
   environment: "{{ env }}"
 
 - name: Copy pub key to GKE Admin Workstation

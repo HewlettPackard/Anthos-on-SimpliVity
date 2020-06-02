@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ### 
+---
 - name: Get the IP for the current admin WS
   import_tasks: tasks/admin_ws_ip.yml
 

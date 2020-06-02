@@ -21,7 +21,7 @@ vcenter:
 # Specify the proxy configuration.
 proxy:
   # The URL of the proxy
-{% if gke_admin_workstation.proxyUrl is defined and gke_admin_workstation.proxyUrl | length %}
+{% if proxy_enabled %}
   url: "{{ gke_admin_workstation.proxyUrl }}"
 {% else %}
   # url: ""

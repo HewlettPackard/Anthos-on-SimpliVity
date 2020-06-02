@@ -13,10 +13,8 @@
 # See the License for the specific language governing permissions and           
 # limitations under the License.                                                
 ###                                                                             
---
-- name: Save the running configuration of the BIG-IP
-  bigip_config:
-    reset: yes
-    save: yes
-    provider: "{{ f5.provider }}"
-  delegate_to: localhost
+---
+- name: Create GCP accounts
+  become: no
+  shell: >
+    gcloud iam service-accounts create {{ item.name }} --project {{ item.project }} --verbosity debug

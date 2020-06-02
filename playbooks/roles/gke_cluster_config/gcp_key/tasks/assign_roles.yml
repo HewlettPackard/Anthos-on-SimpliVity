@@ -13,10 +13,14 @@
 # See the License for the specific language governing permissions and           
 # limitations under the License.                                                
 ###                                                                             
---
-- name: Save the running configuration of the BIG-IP
-  bigip_config:
-    reset: yes
-    save: yes
-    provider: "{{ f5.provider }}"
-  delegate_to: localhost
+---
+- name: Assign Roles to service accounts
+  become: no
+  shell: >
+    gcloud projects add-iam-policy-binding {{ item.project }} 
+    --member "serviceAccount:{{ item.name }}@{{ item.project }}.{{item.email }}"
+    --role {{ roles }}
+  loop: "{{ item.roles }}"
+  loop_control:
+    loop_var: roles
+  when: item.roles | count >0

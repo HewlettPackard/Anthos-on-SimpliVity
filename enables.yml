@@ -1,0 +1,6 @@
+---
+enable_config_check: false
+gkectl_run_prepare: false
+create_admin_cluster: false
+create_user_cluster: false
+proxy_enabled: true

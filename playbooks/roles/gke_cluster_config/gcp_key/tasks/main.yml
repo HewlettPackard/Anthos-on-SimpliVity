@@ -13,10 +13,23 @@
 # See the License for the specific language governing permissions and           
 # limitations under the License.                                                
 ###                                                                             
---
-- name: Save the running configuration of the BIG-IP
-  bigip_config:
-    reset: yes
-    save: yes
-    provider: "{{ f5.provider }}"
-  delegate_to: localhost
+---
+# tasks file for gcp_key
+
+- name: Pull in default key names
+  include_vars:
+     file: ../create_gke_cluster/defaults/main.yml
+
+- name: Create GCP service accounts
+  include_tasks: create_account.yml
+  loop: "{{ default_gcp_svc_accounts }}"
+  #when: anthos_init | default(false)
+
+- name: Assign Roles to GCP service accounts
+  include_tasks: assign_roles.yml
+  loop: "{{ default_gcp_svc_accounts }}"
+      
+- name: Create json keys for GCP svc accounts
+  include_tasks: create_key.yml
+  loop: "{{ default_gcp_svc_accounts }}"
+      
