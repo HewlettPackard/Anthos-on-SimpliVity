@@ -31,15 +31,14 @@
      msg: "The ansible user is {{ ansible_ssh_user }}"
      verbosity: 2
 
-# git pull HPE repo for deploying and configuring Anthos GKE on-prem
+# Copy over collateral scripts and files for customer use.
 # This will only execute on the GKE admin workstation
-- name: Pull HPE repo for Anthos deployment
+- name: Copy files and scripts to Admin Workstation
   become: no
-  git:
-    repo: "{{ anthos_deploy_git.repo_url }}"
-    dest: "/home/{{ ansible_user }}/{{ anthos_deploy_git.repo_name }}"
+  copy:
+    src: "{{ anthos_collateral }}"
+    dest: "{{ gkeadm_basedir }}"
   when: 
-    - anthos_deploy_git.pull_enable
     - "'anthos_admin' in group_names"
 
 # git pull user data from a git repo. Existing GCP service account keys, ssh keys, ssl certs
@@ -54,13 +53,6 @@
     - anthos_userdata_git.pull_enable
     - "'local' in group_names"
   register: userdata_gitpulled
-
-- name: Check if secrets were pulled from git
-  stat:
-    path: "{{ secrets_path }}/.git"
-  when:
-    - "'local' in group_names"
-  register: git_secrets
 
 - name: Fix permissions on ssh private key
   file:
