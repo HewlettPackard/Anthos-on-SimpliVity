@@ -16,7 +16,7 @@
 ---
 # defaults file for csi
 csi_driver: hpesvt
-svt_csi_driver_image: hpesimplivity/vsphere-csi-driver:v1.0-rc1
-svt_csi_syncer_image: hpesimplivity/vsphere-csi-syncer:v1.0-rc1
+svt_csi_driver_image: hpesimplivity/vsphere-csi-driver:v1.0-rc2
+svt_csi_syncer_image: hpesimplivity/vsphere-csi-syncer:v1.0-rc2
 simplivity_username: "{{ vcenter.username }}"
 simplivity_password: "{{ vcenter.password }}"

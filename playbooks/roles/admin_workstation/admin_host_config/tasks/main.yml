@@ -24,6 +24,7 @@
     owner: ubuntu
     group: ubuntu
     mode: 0644
+  when: proxy_enabled
 
 - name: Add project to gcloud config
   become: false
