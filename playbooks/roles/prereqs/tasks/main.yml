@@ -137,16 +137,30 @@
   stat:
     path: /usr/local/bin/gkeadm
   register: gkeadm_check
+
+- name: If gkeadm exists then check version against desired
+  shell: |
+    /usr/local/bin/gkeadm version
+  register: gkeadm_check_version
+  when: gkeadm_check.stat.exists == true
     
-- name: Download gkeadm binary if it doesn't exist
+- debug:
+    msg: "{{ gkeadm_check_version }}"
+
+- name: Download gkeadm binary if it doesn't exist or is wrong version
   become: false
   shell: |
     gsutil cp gs://gke-on-prem-release-public/gkeadm/{{ anthos_version }}/linux/gkeadm /tmp
-  when: gkeadm_check.stat.exists == false
+  when: >
+    gkeadm_check.stat.exists == false
+    or '"anthos_version" not in gkeadm_check_version.stdout_lines'
 
 - name: Move gkeadm and set execute permissions
   copy:
     src: /tmp/gkeadm
     dest: /usr/local/bin/gkeadm
     mode: 0655
-  when: gkeadm_check.stat.exists == false
+    force: yes
+  when: >
+    gkeadm_check.stat.exists == false
+    or '"anthos_version" not in gkeadm_check_version.stdout_lines'

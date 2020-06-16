@@ -104,6 +104,13 @@
         loadBalancerIP: "{{ item.anthos_service_mesh_externalIP }}"
   when: item.anthos_service_mesh_externalIP | ipaddr
 
+- name: Ensure Namespace(s) for annotation exist
+  include_tasks: tasks/create_namespace.yml
+  loop: "{{ item.anthos_service_mesh_sidecar_enable }}"
+  loop_control:
+    loop_var: new_namespace
+  when: item.anthos_service_mesh_sidecar_enable | count >0
+
 - name: Annotate the Namespace to enable istio sidecar injection
   k8s:
     kubeconfig: "{{ uc_kube_config_file }}"
