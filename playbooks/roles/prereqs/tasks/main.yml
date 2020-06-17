@@ -100,11 +100,6 @@
   environment: "{{ env }}"
   when: ansible_os_family == 'RedHat'
 
-- name: Configure gcloud project
-  become: false
-  shell: |
-    gcloud config set project "{{ gcloud_project }}"
-
 - name: Configure gcloud project and proxy
   become: false
   shell: |
@@ -112,6 +107,11 @@
     gcloud config set proxy/address "{{ proxy_address }}"
     gcloud config set proxy/port "{{ proxy_port }}"
   when: proxy_enabled
+
+- name: Configure gcloud project
+  become: false
+  shell: |
+    gcloud config set project "{{ gcloud_project }}"
 
 - name: Activate GCP whitelisted key
   become: false
