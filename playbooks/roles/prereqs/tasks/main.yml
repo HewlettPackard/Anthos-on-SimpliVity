@@ -139,13 +139,15 @@
   register: gkeadm_check
 
 - name: If gkeadm exists then check version against desired
+  become: false
   shell: |
-    /usr/local/bin/gkeadm version
+    /usr/local/bin/gkeadm version --log_file /dev/null
   register: gkeadm_check_version
   when: gkeadm_check.stat.exists == true
     
 - debug:
     msg: "{{ gkeadm_check_version }}"
+    verbosity: 2
 
 - name: Download gkeadm binary if it doesn't exist or is wrong version
   become: false
