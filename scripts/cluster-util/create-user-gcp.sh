@@ -1,8 +1,23 @@
 #!/bin/bash
+###                                                                             
+# Copyright (2020) Hewlett Packard Enterprise Development LP                    
+#                                                                               
+# Licensed under the Apache License, Version 2.0 (the "License");               
+# You may not use this file except in compliance with the License.              
+# You may obtain a copy of the License at                                       
+#                                                                               
+# http://www.apache.org/licenses/LICENSE-2.0                                    
+#                                                                               
+# Unless required by applicable law or agreed to in writing, software           
+# distributed under the License is distributed on an "AS IS" BASIS,             
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.      
+# See the License for the specific language governing permissions and           
+# limitations under the License.                                                
+###                                                                             
+
 # Enter desired username for GCP login as first parameter
 # Copy/paste the resultant token into your GCP console login
 
-. ~/gcloud-proxy-vars
 
 unset username
 unset userkubeconfig
@@ -14,7 +29,7 @@ Help()
   echo "This script is used to create a user in an Anthos user cluster and assign "
   echo "view, node-reader and cluster-admin (Optional) roles"
   echo
-  echo "Syntax: $(basename $0) [-n|a|h]"
+  echo "Syntax: $(basename $0) [-u|k|A|h]"
   echo "options:"
   echo "-u     Username to create in cluster. (Required)"
   echo "-k     Path to user cluster kubeconfig file. Will use env KUBECONFIG if set (Optional)"
@@ -47,7 +62,7 @@ done
 
 if [ -z "$username" ]
 then
-    echo -n "Must supply username to create\n"
+    echo -e "Must supply username to create\n"
     Help
     exit
 fi
@@ -62,7 +77,7 @@ then
         exit
     fi
 else
-    echo -n "Using specified kubeconfig ${userkubeconfig}\n"
+    echo -e "Using specified kubeconfig ${userkubeconfig} \n"
 fi
 
 # Creating user account 
