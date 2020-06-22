@@ -1,0 +1,169 @@
+###                                                                             
+# Copyright (2020) Hewlett Packard Enterprise Development LP                    
+#                                                                               
+# Licensed under the Apache License, Version 2.0 (the "License");               
+# You may not use this file except in compliance with the License.              
+# You may obtain a copy of the License at                                       
+#                                                                               
+# http://www.apache.org/licenses/LICENSE-2.0                                    
+#                                                                               
+# Unless required by applicable law or agreed to in writing, software           
+# distributed under the License is distributed on an "AS IS" BASIS,             
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.      
+# See the License for the specific language governing permissions and           
+# limitations under the License.                                                
+###                                                                             
+---
+# tasks file for preflight
+
+# Check for vsphere infrastructure
+- name: vcenter datastore info
+  vmware_datastore_info:
+      username: "{{ vcenter.username }}"
+      hostname: "{{ vcenter.address }}"
+      datacenter: "{{ vcenter.datacenter }}"
+      cluster: "{{ vcenter.cluster }}"
+      password: "{{ vcenter.password }}"
+      validate_certs: no
+  register: main_datastore_info
+
+- debug:
+    msg: "{{ main_datastore_info }}"
+    verbosity: 2
+
+- set_fact:
+    ds_list: "{{ main_datastore_info | json_query('datastores[*].name') }}"
+    
+- debug:
+    msg: "{{ ds_list }}"
+    verbosity: 2
+    
+- name: Check for datastores in Global Definition
+  fail:
+    msg: "Specified datastore {{ item.name }} doesn't exist as specified in {{ item.desc }}"
+  ignore_errors: true
+  with_items:
+    - { name: "{{ vcenter.datastore }}", desc: 'vcenter.datastore' }
+  when: >
+    item.name | length
+    and item.name not in ds_list
+
+- name: Check for datastores in GKE cluster definition
+  fail:
+    msg: "Specified datastore {{ item.datastore }} for cluster {{ item.name }} doesn't exist"
+  when: >
+    item.datastore | length
+    and item.datastore not in ds_list
+  ignore_errors: true
+  loop: "{{ gke_cluster_config }}"
+
+- name: Check for CSI datastores in user cluster definition
+  fail:
+    msg: "Specified datastore {{ item.csi_datastore_name }} for CSI in cluster {{ item.name }} doesn't exist"
+  when: >
+    item.type == "user"
+    and item.csi_datastore_name | length
+    and item.csi_datastore_name not in ds_list
+  ignore_errors: true
+  loop: "{{ gke_cluster_config }}"
+
+- name: Retrieve List of Alternate vCenter Cluster Datastores
+  vmware_datastore_info:
+      username: "{{ gke_admin_workstation.alt_vcenter.username }}"
+      hostname: "{{ gke_admin_workstation.alt_vcenter.address }}"
+      datacenter: "{{ gke_admin_workstation.alt_vcenter.datacenter }}"
+      cluster: "{{ gke_admin_workstation.alt_vcenter.cluster }}"
+      password: "{{ gke_admin_workstation.alt_vcenter.password }}"
+      validate_certs: no
+  register: alternate_datastore_info
+
+- set_fact:
+    alt_ds_list: "{{ alternate_datastore_info | json_query('datastores[*].name') }}"
+    
+- name: Check for Datastores in Alternate GKE Admin Workstation Definition
+  fail:
+    msg: "Specified datastore {{ gke_admin_workstation.alt_vcenter.datastore }} for Alternate GKE Admin WS vCenter doesn't exist"
+  ignore_errors: true
+  when: >
+    gke_admin_workstation.alt_vcenter.enable
+    and gke_admin_workstation.alt_vcenter.datastore | length
+    and gke_admin_workstation.alt_vcenter.datastore not in alt_ds_list
+
+- name: Check for Data Disk Folder Existence
+  vsphere_file:
+    username: "{{ vcenter.username }}"
+    hostname: "{{ vcenter.address }}"
+    datacenter: "{{ vcenter.datacenter }}"
+    datastore: "{{ vcenter.datastore }}"
+    password: "{{ vcenter.password }}"
+    path: "{{ gke_data_disk_name | dirname }}/test-disk.vmdk"
+    state: touch
+    validate_certs: no
+  changed_when: false
+  ignore_errors: true
+  register: file_touch
+
+- debug:
+    msg: "{{ file_touch }}"
+    verbosity: 2
+
+- name: Delete Temporary Test File
+  vsphere_file:
+    username: "{{ vcenter.username }}"
+    hostname: "{{ vcenter.address }}"
+    datacenter: "{{ vcenter.datacenter }}"
+    datastore: "{{ vcenter.datastore }}"
+    password: "{{ vcenter.password }}"
+    path: "{{ gke_data_disk_name | dirname }}/test-disk.vmdk"
+    state: absent
+    validate_certs: no
+  changed_when: false
+  ignore_errors: true
+  when: not file_touch.failed
+
+- name: Retrieve vCenter Resource Pool Info
+  vmware_resource_pool_info:
+      username: "{{ vcenter.username }}"
+      hostname: "{{ vcenter.address }}"
+      password: "{{ vcenter.password }}"
+      validate_certs: no
+  ignore_errors: true
+  register: rp_info
+
+- debug:
+    msg: "{{ rp_info }}"
+    verbosity: 2
+
+- set_fact:
+    rp_list: "{{ rp_info | json_query('resource_pool_info[*].name') }}"
+
+- name: Check for Resource Pools in GKE cluster definition
+  fail:
+    msg: "Specified resource pool {{ item.resource_pool }} for cluster {{ item.name }} doesn't exist"
+  when: >
+    item.resource_pool | length
+    and item.resource_pool not in rp_list
+  ignore_errors: true
+  loop: "{{ gke_cluster_config }}"
+
+- name: Check for Resource Pools for GKE Admin WS and Global definition
+  fail:
+    msg: "Specified resource pool {{ item.name }} doesn't exist as defined in {{ item.desc }}"
+  ignore_errors: true
+  with_items:
+    - { name: "{{ vcenter.resourcepool }}", desc: 'vcenter.resourcepool' }
+    - { name: "{{ gke_cluster_resource_pool }}", desc: 'gke_cluster_resource_pool' }
+  when: >
+    item.name | length
+    and item.name not in rp_list
+
+- name: Check for Resource Pools for Alternate GKE Admin WS location
+  fail:
+    msg: "Specified resource pool {{ item.name }} doesn't exist as defined in {{ item.desc }}"
+  with_items:
+    - { name: "{{ gke_admin_workstation.alt_vcenter.resourcepool }}", desc: 'gke_admin_workstation.alt_vcenter.resourcepool' }
+  ignore_errors: true
+  when: >
+    gke_admin_workstation.alt_vcenter.enable
+    and item.name | length
+    and item.name not in rp_list

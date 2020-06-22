@@ -303,6 +303,15 @@ When running ansible-playbook, you will need to specify `--ask-vault-pass` on co
 * Ensure all variable files have been edited to reflect your environment
 * cd Anthos-on-SimpliVity directory
 * Activate your python virtualenv created earlier by ansible-setup.sh  `source 'path_to_env/bin/activate'`
+
+### Preflight Playbook
+
+A playbook to check certain variables defined in all.yml is provided.  Executing `ansible-playbook playbooks/preflight.yml` will check for existence of vSphere datastores and resource pools defined in all.yml. Indirectly it will also check for proper vSphere credentials for your defined vCenter servers.
+
+Running the playbook as `ANSIBLE_STDOUT_CALLBACK=selective ansible-playbook playbooks/preflight.yml` will provide a more terse output and only display failures.
+
+Once the preflight playbook executes without failure, then you can run the full deployment playbook.
+
 * Execute `ansible-playbook site.yml --ask-vault-pass`
 
 The last debug message from ansible will provide admin workstation login information similar to the following:
