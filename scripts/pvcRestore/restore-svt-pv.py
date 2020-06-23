@@ -27,10 +27,14 @@ def parse_args():
     parser.add_argument("--v","--ipvCenter", required=True, type=str, help="IP or FQDN of vCenter: {REQUIRED}")
     parser.add_argument("--u","--username", required=True, type=str, help="vCenter UserName: {REQUIRED}")
     parser.add_argument("--s","--stgClass", required=True, type=str, help="StorageClass name: {REQUIRED}")
-    parser.add_argument("--k","--kubec", required=True, type=str, help="Path to kubeconfig file: {REQUIRED}")
+    parser.add_argument("--k","--kubec", required=False, default=os.environ.get('KUBECONFIG'), type=str, help="Path to kubeconfig file: {use $KUBECONFIG if not set}")
     
 
     args = parser.parse_args()
+
+    if args.k is None:
+        print('\x1b[1;31m'+'Must pass in kubeconfig file (--k) or set KUBECONFIG environment variable'+'\x1b[0m')
+        sys.exit(1)
 
     print("Using OVC: "+args.i)
     print("Restoring PV: "+args.d)
@@ -198,10 +202,10 @@ def main():
     #Passes the Volume Handle and creates a PV yaml
     create_pv_yaml(args, volume_handle_id, rndNum)
 
-    #Applies the yaml to the K8s cluster with user provided kubeconfig
+    #Applies the yaml to the K8s cluster with user provided kubeconfig and cleans up
     print("kubectl --kubeconfig="+args.k+" apply -f pvRestore-"+rndNum+".yaml")
     os.system("kubectl --kubeconfig="+args.k+" apply -f pvRestore-"+rndNum+".yaml")
-
+    os.remove("pvRestore-"+rndNum+".yaml")
     
 if __name__ == '__main__':
  
