@@ -76,6 +76,7 @@
       password: "{{ gke_admin_workstation.alt_vcenter.password }}"
       validate_certs: no
   register: alternate_datastore_info
+  when: gke_admin_workstation.alt_vcenter.enable
 
 - set_fact:
     alt_ds_list: "{{ alternate_datastore_info | json_query('datastores[*].name') }}"
