@@ -62,14 +62,13 @@
         name: vsphere-config-secret
         namespace: kube-system
 
-
-- name: Set variables specific to HPESVT CSI Driver
+- name: Set variables specific to vmware CSI Driver
   set_fact:
-    csi_controller_rbac: "svt-csi-controller-rbac.yaml"
-    csi_controller_deployment: "svt-csi-controller-deployment.yaml.j2"
-    csi_controller_node_ds: "svt-csi-node-ds.yaml.j2"
-    csi_provisioner: "csi.simplivity.hpe.com"
-  when: csi_driver == "hpesvt"
+    csi_controller_rbac: "vsphere-csi-controller-rbac.yaml"
+    csi_controller_deployment: "vsphere-csi-controller-deployment.yaml.j2"
+    csi_controller_node_ds: "vsphere-csi-node-ds.yaml.j2"
+    csi_provisioner: "csi.vsphere.vmware.com"
+  when: csi_driver == "vsphere"
 
 - name: Create Controller RBAC for {{ item.type }} cluster - {{ item.name }}
   k8s:

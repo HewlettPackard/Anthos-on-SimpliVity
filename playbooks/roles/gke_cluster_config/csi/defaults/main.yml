@@ -15,8 +15,11 @@
 ###                                                                             
 ---
 # defaults file for csi
-csi_driver: hpesvt
-svt_csi_driver_image: hpesimplivity/vsphere-csi-driver:v1.0-rc2
-svt_csi_syncer_image: hpesimplivity/vsphere-csi-syncer:v1.0-rc2
+csi_driver: vsphere
 simplivity_username: "{{ vcenter.username }}"
 simplivity_password: "{{ vcenter.password }}"
+vsphere_csi_driver_image: gcr.io/cloud-provider-vsphere/csi/release/driver:v2.0.0
+vsphere_csi_syncer_image: gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.0.0
+vsphere_csi_livenessprobe_image: quay.io/k8scsi/livenessprobe:v1.1.0
+vsphere_csi_provisioner_image: quay.io/k8scsi/csi-provisioner:v1.4.0
+vsphere_csi_nodedriverregistrar_image: quay.io/k8scsi/csi-node-driver-registrar:v1.2.0
