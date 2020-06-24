@@ -1,0 +1,168 @@
+{#
+###                                                                             
+# Copyright (2020) Hewlett Packard Enterprise Development LP                    
+#                                                                               
+# Licensed under the Apache License, Version 2.0 (the "License");               
+# You may not use this file except in compliance with the License.              
+# You may obtain a copy of the License at                                       
+#                                                                               
+# http://www.apache.org/licenses/LICENSE-2.0                                    
+#                                                                               
+# Unless required by applicable law or agreed to in writing, software           
+# distributed under the License is distributed on an "AS IS" BASIS,             
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.      
+# See the License for the specific language governing permissions and           
+# limitations under the License.                                                
+###                                                                             
+#}
+apiVersion: v1
+kind: AdminCluster
+# Absolute path to a GKE bundle on disk
+bundlePath: {{ gke_bundle_path }}
+# (Required) vCenter configuration
+vCenter:
+  address: {{ vcenter.address }}
+  datacenter: {{ vcenter.datacenter }}
+  cluster: {{ vcenter.cluster }}
+  resourcePool: {{ item.resource_pool | default(gke_cluster_resource_pool, true) }}
+  datastore: {{ item.datastore | default(vcenter.datastore, true) }}
+  # Provide the path to vCenter CA certificate pub key for SSL verification
+  caCertPath: {{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ vcenter.cacert }}
+  # The credentials and address to connect to vCenter
+  credentials:
+    username: {{ vault_vcenter_username }}
+    password: {{ vault_vcenter_password }}
+  # Provide the name for the persistent disk to be used by the deployment (ending
+  # in .vmdk). Any directory in the supplied path must be created before deployment.
+  # Not required when adding additional user clusters
+  dataDisk: {{ gke_data_disk_name }}
+# (Required) Network configuration
+network: 
+  ipMode:
+    # (Required) Define what IP mode to use ("dhcp" or "static")
+    type: {{ item.gkenode_net.mode }}
+{% if item.gkenode_net.mode == 'static' %}
+  # # (Required when using "static" mode) The absolute or relative path to the yaml file
+  # # to use for static IP allocation
+      ipBlockFilePath: {{ item.name }}-ip.yaml"
+{% else %}
+  # # (Required when using "static" mode) The absolute or relative path to the yaml file
+  # # to use for static IP allocation
+  # ipBlockFilePath: ""
+{% endif %}
+  # (Required) The Kubernetes service CIDR range for the cluster. Must not overlap
+  # with the pod CIDR range
+  serviceCIDR: 10.96.232.0/24
+  # (Required) The Kubernetes pod CIDR range for the cluster. Must not overlap with
+  # the service CIDR range
+  podCIDR: 192.168.0.0/16
+  vCenter:
+    # vSphere network name
+    networkName: {{ item.cluster_network | default(gke_network_internal, true)}}
+# (Required) Load balancer configuration
+loadBalancer:
+# (Required) The VIPs to use for load balancing
+  vips:
+    # Used to connect to the Kubernetes API
+    controlPlaneVIP: {{ item.cluster_ctrl_vip }}
+    # # (Optional) Used for admin cluster addons (needed for multi cluster features). Must
+    # # be the same across clusters
+    # addonsVIP: ""
+  # (Required) Which load balancer to use "F5BigIP" "Seesaw" or "ManualLB". Uncomment
+  # the corresponding field below to provide the detailed spec
+  kind: {{ item.loadBalancerKind | default(gke_loadBalancerKind, true)}}
+{% if item.loadBalancerKind == 'manualLB' %}
+  # # (Required when using "ManualLB" kind) Specify pre-defined nodeports
+  # manualLB:
+  #   ingressHTTPNodePort: 32527
+  #   ingressHTTPSNodePort: 30139
+  #   controlPlaneNodePort: 30968
+  #   addonsNodePort: 31405
+{% elif item.loadBalancerKind == 'F5BigIP' %}
+  # # (Required when using "F5BigIP" kind) Specify the already-existing partition and
+  # # credentials
+  f5BigIP:
+    address: {{ f5.provider.server }}
+    credentials:
+      username: {{ f5.provider.user }}
+      password: {{ f5.provider.password }}
+    partition: {{ item.f5_partition }}
+  #   # # (Optional) Specify a pool name if using SNAT
+  #   # snatPoolName: ""
+{% elif item.loadBalancerKind == 'Seesaw' %}
+  # (Required when using "Seesaw" kind) Specify the Seesaw configs
+  seesaw:
+    # (Required) The absolute or relative path to the yaml file to use for IP allocation
+    # for LB VMs. Must contain one or two IPs.
+    ipBlockFilePath: ""
+    # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
+    # be between 1-255 and unique in a VLAN.
+    vrid: 0
+    # (Required) The IP announced by the master of Seesaw group
+    masterIP: ""
+    # (Required) The number CPUs per machine
+    cpus: 4
+    # (Required) Memory size in MB per machine
+    memoryMB: 8192
+    # (Optional) Network that the LB interface of Seesaw runs in (default: cluster
+    # network)
+    vCenter:
+      # vSphere network name
+      networkName: ""
+    # (Optional) Run two LB VMs to achieve high availability (default: false)
+    enableHA: false
+{% endif %}
+# (Optional) Specify the proxy configuration
+proxy:
+  # The URL of the proxy
+{% if proxy_enabled %}
+  url: {{ gke_admin_workstation.proxyUrl }}
+{% else %}
+  # url: ""
+{% endif %}
+  # The domains and IP addresses excluded from proxying
+{% if no_proxy is defined and no_proxy | length %}
+  noProxy: {{ no_proxy }}
+{% else %}
+  # noProxy: ""
+{% endif %}
+# # Optionally use a private Docker registry to host GKE images
+{% if private_docker_registry %}
+privateRegistry:
+  # Do not include the scheme with your registry address
+  address: {{ private_reg_ip }}:{{ private_reg_port }}
+  credentials:
+    username: {{ private_reg_username }}
+    password: {{ private_reg_password }}
+#   # The absolute or relative path to the CA certificate for this registry
+  caCertPath: {{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ private_reg_cert }}
+{% else %}
+# privateregistryconfig:
+#   # Do not include the scheme with your registry address
+#   address: ""
+#   credentials:
+#     username: ""
+#     password: ""
+#   # The absolute or relative path to the CA certificate for this registry
+#   caCertPath: ""
+{% endif %}
+# The absolute or relative path to the GCP service account key that will be used to
+# pull GKE images
+gcrKeyPath: {{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_whitelisted_key }}
+# Specify which GCP project to connect your logs and metrics t
+stackdriver:
+  projectID: {{ gke_stackdriver_projectid | default(gcloud_project, true) }}
+  # A GCP region where you would like to store logs and metrics for this cluster.
+  clusterLocation: {{ item.logging_metric_gcp_region | default(gke_cluster_gcp_region, true) }}
+  enableVPC: {{ item.enable_vpc | default(enable_vpc)  }}
+  # The absolute or relative path to the key file for a GCP service account used to
+  # send logs and metrics from the cluster
+  serviceAccountKeyPath: {{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_stackdriver_key }}
+# Configure kubernetes apiserver audit logging
+cloudAuditLogging:
+  projectid: {{ gke_cloudauditlogging_projectid | default(gcloud_project, true) }}
+  # A GCP region where you would like to store audit logs for this cluster.
+  clusterlocation: {{ item.audit_logging_gcp_region | default(gke_cluster_gcp_region, true) }}
+  # The absolute or relative path to the key file for a GCP service account used to
+  # send audit logs from the cluster
+  serviceaccountkeypath: {{ gkeadm_basedir }}/{{ secrets_directory | regex_replace('\\/$', '') }}/{{ gke_auditLogging_key }}
