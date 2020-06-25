@@ -16,6 +16,8 @@
 ---
 # defaults file for csi
 csi_driver: vsphere
+svt_csi_driver_image: hpesimplivity/vsphere-csi-driver:v1.0-rc4
+svt_csi_syncer_image: hpesimplivity/vsphere-csi-syncer:v1.0-rc4
 simplivity_username: "{{ vcenter.username }}"
 simplivity_password: "{{ vcenter.password }}"
 vsphere_csi_driver_image: gcr.io/cloud-provider-vsphere/csi/release/driver:v2.0.0
