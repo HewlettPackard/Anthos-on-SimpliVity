@@ -1,27 +1,42 @@
-# Minimum Kubernetes version - 1.16
-# For prior releases make sure to add required --feature-gates flags
+{#
+###                                                                             
+# Copyright (2020) Hewlett Packard Enterprise Development LP                    
+#                                                                               
+# Licensed under the Apache License, Version 2.0 (the "License");               
+# You may not use this file except in compliance with the License.              
+# You may obtain a copy of the License at                                       
+#                                                                               
+# http://www.apache.org/licenses/LICENSE-2.0                                    
+#                                                                               
+# Unless required by applicable law or agreed to in writing, software           
+# distributed under the License is distributed on an "AS IS" BASIS,             
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.      
+# See the License for the specific language governing permissions and           
+# limitations under the License.                                                
+###                                                                             
+#}
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: vsphere-csi-controller
+  name: svt-csi-controller
   namespace: kube-system
 spec:
   replicas: 1
   strategy:
-    type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 0
       maxSurge: 1
+      maxUnavailable: 0
+    type: "RollingUpdate"
   selector:
     matchLabels:
-      app: vsphere-csi-controller
+      app: svt-csi-controller
   template:
     metadata:
       labels:
-        app: vsphere-csi-controller
-        role: vsphere-csi
+        app: svt-csi-controller
+        role: svt-csi
     spec:
-      serviceAccountName: vsphere-csi-controller
+      serviceAccountName: svt-csi-controller
       priorityClassName: system-cluster-critical
       affinity:
         podAntiAffinity:
@@ -31,7 +46,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                - vsphere-csi-controller
+                - svt-csi-controller
             topologyKey: "kubernetes.io/hostname"
       tolerations:
         - operator: "Exists"
@@ -60,12 +75,14 @@ spec:
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
-        - name: vsphere-csi-controller
-          image: {{ vsphere_csi_driver_image }}
+        - name: svt-csi-controller
+          image: {{ svt_csi_driver_image }}
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "rm -rf /var/lib/csi/sockets/pluginproxy/csi.vsphere.vmware.com"]
+                command: ["/bin/sh", "-c", "rm -rf /var/lib/csi/sockets/pluginproxy/csi.simplivity.hpe.com"]
+          args:
+            - "--v=4"
           imagePullPolicy: "Always"
           env:
             - name: CSI_ENDPOINT
@@ -74,11 +91,9 @@ spec:
               value: "controller"
             - name: VSPHERE_CSI_CONFIG
               value: "/etc/cloud/csi-vsphere.conf"
-            - name: LOGGER_LEVEL
-              value: "PRODUCTION" # Options: DEVELOPMENT, PRODUCTION
           volumeMounts:
             - mountPath: /etc/cloud
-              name: vsphere-config-volume
+              name: svt-config-volume
               readOnly: true
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
@@ -105,20 +120,18 @@ spec:
             - mountPath: /var/lib/csi/sockets/pluginproxy/
               name: socket-dir
         - name: vsphere-syncer
-          image: {{ vsphere_csi_syncer_image }}
+          image: {{ svt_csi_syncer_image }}
           args:
-            - "--leader-election"
+            - "--v=2"
           imagePullPolicy: "Always"
           env:
             - name: FULL_SYNC_INTERVAL_MINUTES
               value: "30"
             - name: VSPHERE_CSI_CONFIG
               value: "/etc/cloud/csi-vsphere.conf"
-            - name: LOGGER_LEVEL
-              value: "PRODUCTION" # Options: DEVELOPMENT, PRODUCTION
           volumeMounts:
             - mountPath: /etc/cloud
-              name: vsphere-config-volume
+              name: svt-config-volume
               readOnly: true
         - name: csi-provisioner
           image: {{ csi_provisioner_image }}
@@ -137,18 +150,19 @@ spec:
             - mountPath: /csi
               name: socket-dir
       volumes:
-      - name: vsphere-config-volume
-        secret:
-          secretName: vsphere-config-secret
-      - name: socket-dir
-        hostPath:
-          path: /var/lib/csi/sockets/pluginproxy/csi.vsphere.vmware.com
-          type: DirectoryOrCreate
+        - name: svt-config-volume
+          secret:
+            secretName: vsphere-config-secret
+        - name: socket-dir
+          hostPath:
+            path: /var/lib/csi/sockets/pluginproxy/csi.simplivity.hpe.com
+            type: DirectoryOrCreate
 ---
 apiVersion: storage.k8s.io/v1beta1
 kind: CSIDriver
 metadata:
-  name: csi.vsphere.vmware.com
+  name: csi.simplivity.hpe.com
 spec:
   attachRequired: true
   podInfoOnMount: false
+
