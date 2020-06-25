@@ -139,7 +139,7 @@ spec:
       volumes:
       - name: vsphere-config-volume
         secret:
-          secretName: vsphere-config-secret
+          secretName: vsphere-config-secret-{{ csi_driver }}
       - name: socket-dir
         hostPath:
           path: /var/lib/csi/sockets/pluginproxy/csi.vsphere.vmware.com

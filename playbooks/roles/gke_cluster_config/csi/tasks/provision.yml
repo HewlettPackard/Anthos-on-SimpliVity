@@ -59,7 +59,7 @@
       data:
         csi-vsphere.conf: "{{ lookup('template', 'csi-secret.conf.j2') | b64encode }}"
       metadata:
-        name: vsphere-config-secret
+        name: "vsphere-config-secret-{{ csi_driver }}"
         namespace: kube-system
 
 - name: Set variables specific to vmware CSI Driver

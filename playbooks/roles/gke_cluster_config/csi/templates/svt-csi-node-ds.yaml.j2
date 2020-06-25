@@ -120,7 +120,7 @@ spec:
       volumes:
         - name: svt-config-volume
           secret:
-            secretName: vsphere-config-secret
+            secretName: vsphere-config-secret-{{ csi_driver }}
         - name: registration-dir
           hostPath:
             path: /var/lib/kubelet/plugins_registry
