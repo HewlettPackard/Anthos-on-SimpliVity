@@ -21,7 +21,7 @@ kind: UserCluster
 name: {{ item.name }}
 # (Required) GKE on-prem version (example: 1.3.0-gke.16)
 gkeOnPremVersion: {{ anthos_version }}
-# # (Optional) vCenter configuration (default: inherit from the admin cluster)
+# (Optional) vCenter configuration (default: inherit from the admin cluster)
 vCenter:
   resourcePool: {{ item.resource_pool | default(gke_cluster_resource_pool, true)}}
   datastore: {{ item.datastore | default(vcenter.datastore, true) }}
@@ -32,7 +32,7 @@ vCenter:
     username: {{ vault_vcenter_username }}
     password: {{ vault_vcenter_password }}
 # (Required) Network configuration
-network: 
+network:
   ipMode:
     # (Required) Define what IP mode to use ("dhcp" or "static")
     type: {{ item.gkenode_net.mode }}
@@ -112,10 +112,10 @@ loadBalancer:
 # (Optional) User cluster master nodes must have either 1 or 3 replicas (default:
 # 4 CPUs; 16384 MB memory; 1 replica)
 masterNode:
-  cpus: {{ item.masternode_cpu | default(4) }}
-  memoryMB: {{ item.masternode_memory | default(8192) }}
+  cpus: {{ item.masternode_cpu | default(4, true) }}
+  memoryMB: {{ item.masternode_memory | default(8192, true) }}
   # How many machines of this type to deploy
-  replicas: {{ item.masternode_replicas | default(1) }}
+  replicas: {{ item.masternode_replicas | default(1, true) }}
 # (Required) List of node pools. The total un-tainted replicas across all node pools
 # must be greater than or equal to 3
 nodePools:
@@ -127,10 +127,10 @@ nodePools:
   # - key: ""
   #   value: ""
   #   effect: ""
-  cpus: {{ item.workernode_cpu }}
-  memoryMB: {{ item.workernode_memory }}
+  cpus: {{ item.workernode_cpu | default(4, true) }}
+  memoryMB: {{ item.workernode_memory | default(8192, true) }}
   # How many machines of this type to deploy
-  replicas: {{ item.workernode_replicas }}
+  replicas: {{ item.workernode_replicas | default(3, true) }}
 # Spread nodes across at least three physical hosts (requires at least three hosts)
 antiAffinityGroups:
   # Set to false to disable DRS rule creation
