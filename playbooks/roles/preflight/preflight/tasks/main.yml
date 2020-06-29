@@ -59,7 +59,9 @@
 
 - name: Check for CSI datastores in user cluster definition
   fail:
-    msg: "Specified datastore {{ item.csi_datastore_name }} for CSI in cluster {{ item.name }} doesn't exist"
+    msg: >
+     "WARNING ONLY -- Specified datastore {{ item.csi_datastore_name }} for CSI in cluster {{ item.name }} doesn't exist
+     It will be created during the CSI driver installation"
   when: >
     item.type == "user"
     and item.csi_datastore_name | length
