@@ -44,7 +44,7 @@ network:
 {% if item.gkenode_net.mode == 'static' %}
   # # (Required when using "static" mode) The absolute or relative path to the yaml file
   # # to use for static IP allocation
-      ipBlockFilePath: {{ item.name }}-ip.yaml"
+    ipBlockFilePath: {{ item.name }}-ip.yaml"
 {% else %}
   # # (Required when using "static" mode) The absolute or relative path to the yaml file
   # # to use for static IP allocation
