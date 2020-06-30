@@ -30,7 +30,7 @@ vCenter:
   datastore: "{{ gke_admin_workstation.alt_vcenter.datastore }}"
   cluster: "{{ gke_admin_workstation.alt_vcenter.cluster }}"
   network: "{{ gke_admin_workstation.alt_vcenter.network }}"
-  resourcePool: "{{ gke_admin_workstation.alt_vcenter.resourcepool }}"
+  resourcePool: "{{ gke_admin_workstation.alt_vcenter.resourcepool | default(gke_admin_workstation.alt_vcenter.cluster + '/Resources', true) }}"
   # Provide the path to vCenter CA certificate pub key for SSL verification
   caCertPath: "{{ secrets_path }}/{{ gke_admin_workstation.alt_vcenter.cacert }}"
 {% else %}
@@ -43,13 +43,13 @@ vCenter:
   datastore: "{{ vcenter.datastore }}"
   cluster: "{{ vcenter.cluster }}"
   network: "{{ vcenter.network }}"
-  resourcePool: "{{ vcenter.resourcepool }}"
+  resourcePool: "{{ vcenter.resourcepool | default(vcenter.cluster + '/Resources', true) }}"
   # Provide the path to vCenter CA certificate pub key for SSL verification
   caCertPath: "{{ secrets_path }}/{{ vcenter.cacert }}"
 {% endif %}
 # The URL of the proxy for the jump host
 {% if proxy_enabled %}
-proxyUrl: "{{ gke_admin_workstation.proxyUrl }}"
+proxyUrl: "{{ proxyUrl }}"
 {% else %}
 # proxyUrl: ""
 {% endif %}
@@ -60,6 +60,7 @@ adminWorkstation:
   # The disk size of the admin workstation in GB. It is recommended to use a disk
   # with at least 50 GB to host images decompressed from the bundle.
   diskGB: {{ gke_admin_workstation.diskGB }}
+  dataDiskMB: {{ gke_admin_workstation.datadiskMB | default(512) }}
   network:
     # The IP allocation mode: 'dhcp' or 'static'
     ipAllocationMode: "{{ gke_admin_workstation.ipAllocationMode }}"
@@ -78,7 +79,7 @@ adminWorkstation:
 {% endif %}
   # The URL of the proxy for the admin workstation
 {% if proxy_enabled %}
-  proxyUrl: "{{ gke_admin_workstation.proxyUrl }}"
+  proxyUrl: "{{ proxyUrl }}"
 {% else %}
   # proxyUrl: ""
 {% endif %}

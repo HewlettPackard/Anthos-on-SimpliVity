@@ -23,8 +23,8 @@
 - name: Set env if proxyUrl is defined
   set_fact:
     env:
-      http_proxy: "{{ gke_admin_workstation.proxyUrl }}"
-      https_proxy: "{{ gke_admin_workstation.proxyUrl }}"
+      http_proxy: "{{ proxyUrl }}"
+      https_proxy: "{{ proxyUrl }}"
       no_proxy: "{{ no_proxy }}"
   when: proxy_enabled
 

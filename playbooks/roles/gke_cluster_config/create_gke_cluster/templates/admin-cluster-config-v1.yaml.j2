@@ -116,7 +116,7 @@ loadBalancer:
 proxy:
   # The URL of the proxy
 {% if proxy_enabled %}
-  url: {{ gke_admin_workstation.proxyUrl }}
+  url: {{ proxyUrl }}
 {% else %}
   # url: ""
 {% endif %}
