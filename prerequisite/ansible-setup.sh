@@ -20,9 +20,6 @@
 unset venv_dir
 venv_base_dir=$(readlink -f ~/virtualenvs)
 
-HTTPS_PROXY="HTTPS_PROXY=http://16.100.211.43:8888"
-needs_proxy=true
-
 SCRIPT_PATH=$(readlink -f $0)
 DIR=$(dirname "$SCRIPT_PATH")
 
@@ -30,14 +27,15 @@ Help()
 {
   # Display Help
   printf "%sThis script is used to create a python3 virtualenv with ansible operating environment\n"
-  printf "%sSyntax: $(basename $0) [-b|d|h]\n"
+  printf "%sSyntax: $(basename $0) [-b|d|p|h]\n"
   printf "%soptions:\n"
   printf "%s-b     Base directory to create python virtualenvs. (Default is ~/virtualenvs)\n"
   printf "%s-d     Name to use for virtualenv directory. (Required)\n"
+  printf "%s-p     Proxy url to use to get . (Optional) ex. http://16.100.211.43.8888\n"
   printf "%s-h     Print this Help.\n"
 }
 
-while getopts ":hb:d:" option; do
+while getopts ":hb:d:p:" option; do
    case $option in
       h ) # display Help
          Help
@@ -48,6 +46,9 @@ while getopts ":hb:d:" option; do
          ;;
       d ) # set virtualenv directory
          venv_dir=${OPTARG}
+         ;;
+      p ) # set proxy url 
+         HTTPS_PROXY=${OPTARG}
          ;;
      \? ) # incorrect option
          echo "Error: Invalid option"
@@ -90,6 +91,12 @@ if [ -d "$venv_base_dir/$venv_dir" ]; then
     exit
 fi
 
+# Export proxy url if defined
+if [ ! -z "$HTTPS_PROXY" ] ; then
+    export HTTPS_PROXY
+    printf "%s\nProxy url set to $HTTPS_PROXY\n"
+fi
+
 # Deploy the virtualenv
 if python3 -m venv $venv_base_dir/$venv_dir; then
     source $venv_base_dir/$venv_dir/bin/activate
@@ -98,9 +105,6 @@ else
     exit
 fi
 
-if [ "$needs_proxy" = true ]; then
-    export $HTTPS_PROXY
-fi
 
 printf "%s\nInstalling required packages via pip into virtualenv $venv_base_dir/$venv_dir\n"
 
