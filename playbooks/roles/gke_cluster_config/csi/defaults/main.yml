@@ -15,10 +15,7 @@
 ###                                                                             
 ---
 # defaults file for csi
-csi_driver: vsphere # Change to 'hpesvt' for simplivity csi install
-# images for hpesvt csi driver
-svt_csi_driver_image: hpesimplivity/vsphere-csi-driver:v1.0-rc4
-svt_csi_syncer_image: hpesimplivity/vsphere-csi-syncer:v1.0-rc4
+csi_driver: vsphere
 # images for vsphere csi driver
 vsphere_csi_driver_image: gcr.io/cloud-provider-vsphere/csi/release/driver:v2.0.0
 vsphere_csi_syncer_image: gcr.io/cloud-provider-vsphere/csi/release/syncer:v2.0.0
