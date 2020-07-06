@@ -38,6 +38,7 @@
   copy:
     src: "{{ anthos_collateral }}"
     dest: "{{ gkeadm_basedir }}"
+    mode: "+x"
   when: 
     - "'anthos_admin' in group_names"
 
