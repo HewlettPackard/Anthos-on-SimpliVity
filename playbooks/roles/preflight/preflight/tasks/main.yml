@@ -59,7 +59,9 @@
 
 - name: Check for CSI datastores in user cluster definition
   fail:
-    msg: "Specified datastore {{ item.csi_datastore_name }} for CSI in cluster {{ item.name }} doesn't exist"
+    msg: >
+     "WARNING ONLY -- Specified datastore {{ item.csi_datastore_name }} for CSI in cluster {{ item.name }} doesn't exist
+     It will be created during the CSI driver installation"
   when: >
     item.type == "user"
     and item.csi_datastore_name | length
@@ -76,6 +78,7 @@
       password: "{{ gke_admin_workstation.alt_vcenter.password }}"
       validate_certs: no
   register: alternate_datastore_info
+  when: gke_admin_workstation.alt_vcenter.enable
 
 - set_fact:
     alt_ds_list: "{{ alternate_datastore_info | json_query('datastores[*].name') }}"
@@ -120,6 +123,35 @@
   changed_when: false
   ignore_errors: true
   when: not file_touch.failed
+
+- name: Check for Data Disk Existance
+  vsphere_file:
+    username: "{{ vcenter.username }}"
+    hostname: "{{ vcenter.address }}"
+    datacenter: "{{ vcenter.datacenter }}"
+    datastore: "{{ vcenter.datastore }}"
+    password: "{{ vcenter.password }}"
+    path: "{{ gke_data_disk_name }}"
+    state: file
+    validate_certs: no
+  changed_when: false
+  failed_when: false
+  #ignore_errors: true
+  register: data_disk_state
+
+- name: Warn if Data Disk for admin cluster already exists
+  fail:
+    msg: |
+     WARNING -- Specified Data Disk {{ gke_data_disk_name }} already exists.
+     If you have a running admin cluster then set 'create_admin_cluster: false' before running playbook create_cluster.yml
+     If you are attempting to deploy an admin cluster then cleanup all vmdk files named {{ gke_data_disk_name }}*.vmdk
+  when: >
+    data_disk_state.state == 'file'
+  ignore_errors: true
+
+- debug:
+    msg: "{{ data_disk_state }}"
+    verbosity: 2
 
 - name: Retrieve vCenter Resource Pool Info
   vmware_resource_pool_info:

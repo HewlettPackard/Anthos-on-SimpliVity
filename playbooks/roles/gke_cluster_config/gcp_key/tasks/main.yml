@@ -20,10 +20,16 @@
   include_vars:
      file: ../create_gke_cluster/defaults/main.yml
 
+- name: Retrieve list of Existing Service Accounts in project {{ gcp_project }}
+  become: no
+  shell: >
+    gcloud iam service-accounts list
+  register: gcp_accounts_list
+
 - name: Create GCP service accounts
   include_tasks: create_account.yml
   loop: "{{ default_gcp_svc_accounts }}"
-  #when: anthos_init | default(false)
+  when: item.name not in gcp_accounts_list.stdout
 
 - name: Assign Roles to GCP service accounts
   include_tasks: assign_roles.yml

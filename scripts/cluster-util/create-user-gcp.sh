@@ -93,3 +93,4 @@ fi
 echo -e "Printing authentication token for user ${username}\n"
 SECRET_NAME=$(kubectl --kubeconfig ${userkubeconfig} get serviceaccount $username -o jsonpath='{$.secrets[0].name}')
 kubectl --kubeconfig ${userkubeconfig} get secret ${SECRET_NAME} -o jsonpath='{$.data.token}' | base64 -d
+echo -e "\n"
