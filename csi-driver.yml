@@ -1,2 +1,2 @@
 ---
-csi_driver: hpesvt
+csi_driver: vsphere
