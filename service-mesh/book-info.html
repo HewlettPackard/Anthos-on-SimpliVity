@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Service mesh sample application - Bookinfo | Anthos on HPE SimpliVity</title>
+    <meta name="generator" content="VuePress 1.4.1">
+    
+    <meta name="description" content="">
+    <link rel="preload" href="/Anthos-on-SimpliVity/assets/css/0.styles.48ef4742.css" as="style"><link rel="preload" href="/Anthos-on-SimpliVity/assets/js/app.c66d36eb.js" as="script"><link rel="preload" href="/Anthos-on-SimpliVity/assets/js/3.a36c1b07.js" as="script"><link rel="preload" href="/Anthos-on-SimpliVity/assets/js/5.821ad560.js" as="script"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/10.4c6c4b11.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/11.b50dfb64.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/12.612cd5c2.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/13.d1932b90.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/14.ef5c46d5.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/15.d677261b.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/16.2a2ea771.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/17.edb6588e.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/18.d03631f1.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/19.5fd97853.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/20.8f108193.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/21.05dfe4aa.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/22.dd6e49af.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/23.27a8babf.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/24.47febf86.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/25.9be53ca1.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/26.c17a6585.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/27.8e86709c.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/28.b4210471.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/29.fc616650.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/30.70382014.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/31.8885ebe1.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/32.21d37204.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/33.1a1a0ae7.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/34.82fff274.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/35.a3010252.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/36.eac99218.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/37.79eb7584.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/38.086e225b.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/39.34bca0dc.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/4.a503e121.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/40.da913a9c.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/41.5e116b73.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/42.252b76ea.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/43.f08f03ed.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/44.3e86c83e.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/45.8be5bf04.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/46.0914dd1c.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/47.e4fdd50d.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/48.edbb4d00.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/49.65c66dc0.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/50.a84a0f7b.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/51.ae39a4c1.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/52.de121ac3.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/53.f63646fd.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/54.26356f7e.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/55.23bb6679.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/56.75c08a92.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/57.9411fbcb.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/58.56f313da.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/59.1845e68b.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/6.64279308.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/60.5573aebb.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/61.4a7cfc53.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/62.d92d1e67.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/63.50230074.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/64.e3433747.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/7.77f3198a.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/8.b921b66e.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/9.270fec6a.js"><link rel="prefetch" href="/Anthos-on-SimpliVity/assets/js/vendors~docsearch.ef9ce2b1.js">
+    <link rel="stylesheet" href="/Anthos-on-SimpliVity/assets/css/0.styles.48ef4742.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/Anthos-on-SimpliVity/" class="home-link router-link-active"><img src="/Anthos-on-SimpliVity/assets/images/hpe-logo-nav.jpg" alt="Anthos on HPE SimpliVity" class="logo"> <span class="site-name can-hide">Anthos on HPE SimpliVity</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/Anthos-on-SimpliVity/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/Anthos-on-SimpliVity/blog/" class="nav-link">
+  Blog
+</a></div> <a href="https://github.com/HewlettPackard/Anthos-on-SimpliVity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/Anthos-on-SimpliVity/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/Anthos-on-SimpliVity/blog/" class="nav-link">
+  Blog
+</a></div> <a href="https://github.com/HewlettPackard/Anthos-on-SimpliVity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/Anthos-on-SimpliVity/summary.html" class="sidebar-link">Executive summary</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Release Notes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution overview</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution components</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Preparing the environment </span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring the solution</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Running the playbooks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Post deployment tasks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Storage</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Service Mesh</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/Anthos-on-SimpliVity/service-mesh/book-info.html" class="active sidebar-link">Service mesh sample application - Bookinfo</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Anthos-on-SimpliVity/service-mesh/book-info.html#bookinfo-application-overview" class="sidebar-link">Bookinfo application overview</a></li><li class="sidebar-sub-header"><a href="/Anthos-on-SimpliVity/service-mesh/book-info.html#deploy-the-bookinfo-application" class="sidebar-link">Deploy the Bookinfo application</a></li></ul></li><li><a href="/Anthos-on-SimpliVity/service-mesh/kiali.html" class="sidebar-link">Deploying Kiali</a></li><li><a href="/Anthos-on-SimpliVity/service-mesh/traffic-splitting.html" class="sidebar-link">Managing traffic</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="service-mesh-sample-application-bookinfo"><a href="#service-mesh-sample-application-bookinfo" class="header-anchor">#</a> Service mesh sample application - Bookinfo</h1> <h2 id="bookinfo-application-overview"><a href="#bookinfo-application-overview" class="header-anchor">#</a> Bookinfo application overview</h2> <p>The example deploys a sample application composed of four separate microservices used to demonstrate various Istio features. The application displays information about a book, similar to a single catalog entry of an online book store. Displayed on the page is a description of the book, book details (ISBN, number of pages, and so on), and a few book reviews.</p> <p>The Bookinfo application is broken into four separate microservices:</p> <ul><li><strong>productpage:</strong> The productpage microservice calls the details and reviews microservices to populate the page.</li> <li><strong>details:</strong> The details microservice contains book information.</li> <li><strong>reviews:</strong> The reviews microservice contains book reviews. It also calls the ratings microservice.</li> <li><strong>ratings:</strong> The ratings microservice contains book ranking information that accompanies a book review.</li></ul> <p>There are 3 versions of the reviews microservice:</p> <ul><li>Version <code>v1</code> doesn’t call the ratings service.</li> <li>Version <code>v2</code> calls the ratings service, and displays each rating as 1 to 5 black stars.</li> <li>Version <code>v3</code> calls the ratings service, and displays each rating as 1 to 5 red stars.</li></ul> <p>The end-to-end architecture of the application is shown below.</p> <p><img src="/Anthos-on-SimpliVity/assets/img/bookinfo-overview.534176e8.png" alt=" &quot;Bookinfo application&quot;"></p> <p><strong>Figure.</strong> Bookinfo application</p> <h2 id="deploy-the-bookinfo-application"><a href="#deploy-the-bookinfo-application" class="header-anchor">#</a> Deploy the Bookinfo application</h2> <h3 id="connect-to-your-admin-workstation"><a href="#connect-to-your-admin-workstation" class="header-anchor">#</a> Connect to your admin workstation</h3> <p>Connect to your admin workstation, using the appropriate IP address:</p> <div class="language- extra-class"><pre class="language-text"><code>ssh -i /root/anthos_secrets/vsphere_workstation ubuntu@10.15.155.200
+</code></pre></div><h3 id="configure-kubeconfig"><a href="#configure-kubeconfig" class="header-anchor">#</a> Configure KUBECONFIG</h3> <p>Configure KUBECONFIG, using the appropriate  cluster name:</p> <div class="language- extra-class"><pre class="language-text"><code>export KUBECONFIG=~/kubeconfigs/gmcg-gke-usercluster-1-kubeconfig
+</code></pre></div><h3 id="create-namespace"><a href="#create-namespace" class="header-anchor">#</a> Create namespace</h3> <p>Create a namespace for the application:</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl create namespace bookinfo
+
+namespace/bookinfo created
+</code></pre></div><h3 id="enable-istio-injection-for-namespace"><a href="#enable-istio-injection-for-namespace" class="header-anchor">#</a> Enable Istio injection for namespace</h3> <p>If you have already deployed Service Mesh to the user cluster,<br>
+you can simply use <code>kubectl</code> to enable Istio injection for the namespace:</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl label namespace bookinfo istio-injection=enabled
+</code></pre></div><p>Otherwise, you need to <a href="../core-config/service-mesh-config">configure</a> and <a href="../playbooks/playbook-service-mesh">run</a> the Service Mesh playbook.  To summarize, you need to set <code>anthos_service_mesh_enable: true</code> and add the <code>'bookinfo'</code> namespace to the list of enabled namespaces in the <code>all.yml</code> configuration file:</p> <div class="language- extra-class"><pre class="language-text"><code>gke_cluster_config:
+    - name: 'user-cluster-1'
+      type: 'user'
+      ...
+      anthos_service_mesh_enable: true
+      anthos_service_mesh_externalIP: '10.15.158.55'
+      anthos_service_mesh_sidecar_enable: ['bookinfo']
+</code></pre></div><p>Run the <code>service_mesh.yml</code> playbook:</p> <div class="language- extra-class"><pre class="language-text"><code>ansible-playbook playbooks/service_mesh.yml  
+</code></pre></div><h3 id="check-that-istio-injection-has-been-enabled"><a href="#check-that-istio-injection-has-been-enabled" class="header-anchor">#</a> Check that Istio injection has been enabled</h3> <p>Check that the namespace has been annotated correctly with <code>istio-injection: enabled</code>.</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl get namespace bookinfo -o yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: &quot;2020-06-17T15:53:30Z&quot;
+  labels:
+    istio-injection: enabled
+  name: bookinfo
+  resourceVersion: &quot;661536&quot;
+  selfLink: /api/v1/namespaces/bookinfo
+  uid: 403dadce-c754-410f-a2ee-39374bedcfe8
+spec:
+  finalizers:
+  - kubernetes
+status:
+  phase: Active
+</code></pre></div><h3 id="deploying-the-bookinfo-application"><a href="#deploying-the-bookinfo-application" class="header-anchor">#</a> Deploying the Bookinfo application</h3> <p>Download the manifest for deploying the application:</p> <div class="language- extra-class"><pre class="language-text"><code>curl https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/platform/kube/bookinfo.yaml &gt; bookinfo.yaml
+</code></pre></div><p>Deploy the application in the namepsace:</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl -n bookinfo apply -f bookinfo.yaml
+
+service/details created
+serviceaccount/bookinfo-details created
+deployment.apps/details-v1 created
+service/ratings created
+serviceaccount/bookinfo-ratings created
+deployment.apps/ratings-v1 created
+service/reviews created
+serviceaccount/bookinfo-reviews created
+deployment.apps/reviews-v1 created
+deployment.apps/reviews-v2 created
+deployment.apps/reviews-v3 created
+service/productpage created
+serviceaccount/bookinfo-productpage created
+deployment.apps/productpage-v1 created
+</code></pre></div><p>View the resources deployed:</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl -n bookinfo get deployment
+
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+details-v1       1/1     1            1           5m58s
+productpage-v1   1/1     1            1           5m58s
+ratings-v1       1/1     1            1           5m58s
+reviews-v1       1/1     1            1           5m58s
+reviews-v2       1/1     1            1           5m58s
+reviews-v3       1/1     1            1           5m58s
+
+
+kubectl -n bookinfo get pods
+
+NAME                              READY   STATUS    RESTARTS   AGE
+details-v1-7f6df6f54-cxkdx        2/2     Running   0          6m29s
+productpage-v1-69886c8bcb-4g5q9   2/2     Running   0          6m29s
+ratings-v1-6665bbd4db-srbmt       2/2     Running   0          6m29s
+reviews-v1-7fd87d96bd-74z49       2/2     Running   0          6m29s
+reviews-v2-55d9bfb6d8-2gmj5       2/2     Running   0          6m29s
+reviews-v3-5776c54c64-rn86f       2/2     Running   0          6m29s
+
+
+kubectl -n bookinfo get svc
+
+NAME          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+details       ClusterIP   10.104.35.78     &lt;none&gt;        9080/TCP   6m54s
+productpage   ClusterIP   10.96.108.148    &lt;none&gt;        9080/TCP   6m54s
+ratings       ClusterIP   10.103.184.167   &lt;none&gt;        9080/TCP   6m54s
+reviews       ClusterIP   10.96.117.99     &lt;none&gt;        9080/TCP   6m54s
+
+</code></pre></div><p>Notice that there is a <strong>sidecar</strong> container <code>istio-proxy</code> in each pod:</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl -n bookinfo describe pod productpage
+
+Name:           productpage-v1-69886c8bcb-4g5q9
+Namespace:      bookinfo
+Priority:       0
+Node:           gmcg-gke-user1-node2/10.15.155.122
+Start Time:     Wed, 17 Jun 2020 16:00:36 +0000
+Labels:         app=productpage
+                pod-template-hash=69886c8bcb
+                security.istio.io/tlsMode=istio
+                version=v1
+Annotations:    cni.projectcalico.org/podIP: 192.168.0.23/32
+                sidecar.istio.io/status:
+                  {&quot;version&quot;:&quot;06276c8f39527e9d938cdb12b45ed9dda7fc3bedca74d940552168bfc3d957cc&quot;,&quot;initContainers&quot;:[&quot;istio-init&quot;],&quot;containers&quot;:[&quot;istio-proxy&quot;]...
+...
+Containers:
+  productpage:
+    Container ID:   docker://927727491ccd40378e22e5a27f2388e3890689f6f88b997b4092d9d613e4c45c
+    Image:          docker.io/istio/examples-bookinfo-productpage-v1:1.15.1
+    Image ID:       docker-pullable://istio/examples-bookinfo-productpage-v1@sha256:d54717a1bd3c8e4a12fa887aadbb764e594099a255b3b892da1483a528b6856c
+    Port:           9080/TCP
+    ...
+  istio-proxy:
+    Container ID:  docker://f6d2863e728d3919171d80975af5255167a8a33377645588a1b7647578e69ca8
+    Image:         gcr.io/gke-release/asm/proxyv2:1.4.9-asm.1
+    Image ID:      docker-pullable://gcr.io/gke-release/asm/proxyv2@sha256:4661ed09fb7f0450aecd2c7cb6aa42ea697955f88b32920437796d6de5b9669e
+    Port:          15090/TCP
+</code></pre></div><h3 id="test-the-application"><a href="#test-the-application" class="header-anchor">#</a> Test the application</h3> <p>Use <code>curl</code> to ensure that the application is running.</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl -n bookinfo exec -it &quot;$(kubectl -n bookinfo get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')&quot; -c ratings -- curl productpage:9080/productpage | grep -o &quot;&lt;title&gt;.*&lt;/title&gt;&quot;
+</code></pre></div><p>The application title should be returned.</p> <div class="language- extra-class"><pre class="language-text"><code>&lt;title&gt;Simple Bookstore App&lt;/title&gt;
+</code></pre></div><h3 id="deploy-the-gateway"><a href="#deploy-the-gateway" class="header-anchor">#</a> Deploy the gateway</h3> <p>Download the appropriate manifest file:</p> <div class="language- extra-class"><pre class="language-text"><code>curl https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/networking/bookinfo-gateway.yaml &gt; bookinfo-gateway.yaml
+</code></pre></div><p>Deploy the gateway in the namespace:</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl -n bookinfo apply -f bookinfo-gateway.yaml
+
+gateway.networking.istio.io/bookinfo-gateway created
+virtualservice.networking.istio.io/bookinfo created
+</code></pre></div><p>Determine the ingress IP:</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl get svc istio-ingressgateway -n istio-system
+
+NAME                   TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                                                                                                                      AGE
+istio-ingressgateway   LoadBalancer   10.110.50.233   10.15.158.55   15020:30970/TCP,80:32417/TCP,443:30921/TCP,15029:32551/TCP,15030:30335/TCP,15031:30934/TCP,15032:31978/TCP,15443:31414/TCP   4h57m
+</code></pre></div><p><strong>Note:</strong> The ingress IP will match the value in the variable <code>gke_cluster_config.anthos_service_mesh_externalIP</code> in the <code>all.yml</code>
+configuration file.</p> <h3 id="confirm-the-application-is-accessible-from-outside-the-cluster"><a href="#confirm-the-application-is-accessible-from-outside-the-cluster" class="header-anchor">#</a> Confirm the application is accessible from outside the cluster</h3> <p>Using the ingress IP, you can use <code>curl</code> to access the application homepage, for example:</p> <div class="language- extra-class"><pre class="language-text"><code> curl -s &quot;http://10.15.158.55/productpage&quot; | grep -o &quot;&lt;title&gt;.*&lt;/title&gt;&quot;
+</code></pre></div><p>The application title should be returned.</p> <div class="language- extra-class"><pre class="language-text"><code>&lt;title&gt;Simple Bookstore App&lt;/title&gt;
+</code></pre></div><p>Alternatively, browse to the URL, for example, <code>http://10.15.158.55/productpage</code>:</p> <p><img src="/Anthos-on-SimpliVity/assets/img/servicemesh-productpage1.36a5a778.png" alt=" &quot;Bookinfo homepage&quot;"></p> <p><strong>Figure.</strong> Bookinfo homepage</p> <h3 id="access-the-application-using-an-interal-address"><a href="#access-the-application-using-an-interal-address" class="header-anchor">#</a> Access the application using an interal address</h3> <p>In the output for the service <code>istio-ingressgateway</code> above, notice that port <code>80</code> is mapped to port <code>32417</code>.
+This means that you can access the application using the internal IP address for any node in your user cluster, along with port <code>32417</code>.</p> <p>You can easily discover
+the IP addresses of your nodes using the <code>-o wide</code> flag on the <code>kubectl get nodes</code> command. In the sample user cluster, the four IP addresses are statically configured as <code>10.15.155.121-124</code>.</p> <div class="language- extra-class"><pre class="language-text"><code>kubectl get nodes -o wide
+
+NAME                   STATUS   ROLES    AGE    VERSION          INTERNAL-IP     EXTERNAL-IP     OS-IMAGE             KERNEL-VERSION     CONTAINER-RUNTIME
+gmcg-gke-user1-node1   Ready    &lt;none&gt;   2d2h   v1.16.8-gke.6   10.15.155.121   10.15.155.121   Ubuntu 18.04.4 LTS   5.3.0-53-generic   docker://19.3.2
+gmcg-gke-user1-node2   Ready    &lt;none&gt;   2d2h   v1.16.8-gke.6   10.15.155.122   10.15.155.122   Ubuntu 18.04.4 LTS   5.3.0-53-generic   docker://19.3.2
+gmcg-gke-user1-node3   Ready    &lt;none&gt;   2d2h   v1.16.8-gke.6   10.15.155.123   10.15.155.123   Ubuntu 18.04.4 LTS   5.3.0-53-generic   docker://19.3.2
+gmcg-gke-user1-node4   Ready    &lt;none&gt;   2d2h   v1.16.8-gke.6   10.15.155.124   10.15.155.124   Ubuntu 18.04.4 LTS   5.3.0-53-generic   docker://19.3.2
+</code></pre></div><p>Using the IP address of one of the nodes, together with port (in this instance <code>32417</code>), you can use <code>curl</code> or the browser to access the application homepage:</p> <div class="language- extra-class"><pre class="language-text"><code>curl http://10.15.155.124:32417/productpage
+</code></pre></div><p><img src="/Anthos-on-SimpliVity/assets/img/servicemesh-productpage-internal.43d00f72.png" alt=" &quot;Bookinfo homepage using internal address&quot;"></p> <p><strong>Figure.</strong> Bookinfo homepage using internal address</p> <h3 id="multiple-version-of-the-reviews-service"><a href="#multiple-version-of-the-reviews-service" class="header-anchor">#</a> Multiple version of the reviews service</h3> <p>All 3 versions of the reviews service, <code>v1</code>, <code>v2</code>, and <code>v3</code>, are deployed at the same time.
+As a result, when  you refresh the homepage, you should see different ratings output
+(black stars, red stars or no stars).</p> <p><img src="/Anthos-on-SimpliVity/assets/img/servicemesh-productpage2.7b3a237e.png" alt=" &quot;Bookinfo homepage - black stars&quot;"></p> <p><strong>Figure.</strong> Bookinfo homepage - black stars</p> <p><img src="/Anthos-on-SimpliVity/assets/img/servicemesh-productpage3.90cf42d2.png" alt=" &quot;Bookinfo homepage - red stars&quot;"></p> <p><strong>Figure.</strong> Bookinfo homepage - red stars</p> <p>In a realistic deployment, new versions of a microservice are deployed over time instead of deploying all versions simultaneously.</p></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/HewlettPackard/Anthos-on-SimpliVity/edit/docs-dev/docs-src/service-mesh/book-info.md" target="_blank" rel="noopener noreferrer">Help us improve this page!</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/Anthos-on-SimpliVity/storage/use-csi-wordpress.html" class="prev">
+        Deploying WordPress with CSI storage
+      </a></span> <span class="next"><a href="/Anthos-on-SimpliVity/service-mesh/kiali.html">
+        Deploying Kiali
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/Anthos-on-SimpliVity/assets/js/app.c66d36eb.js" defer></script><script src="/Anthos-on-SimpliVity/assets/js/3.a36c1b07.js" defer></script><script src="/Anthos-on-SimpliVity/assets/js/5.821ad560.js" defer></script>
+  </body>
+</html>
