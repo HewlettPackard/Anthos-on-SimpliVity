@@ -1,3 +1,3 @@
 # Google Cloud's Anthos on HPE SimpliVity
 
-TODO
+[https://hewlettpackard.github.io/Anthos-on-SimpliVity/](https://hewlettpackard.github.io/Anthos-on-SimpliVity/)
