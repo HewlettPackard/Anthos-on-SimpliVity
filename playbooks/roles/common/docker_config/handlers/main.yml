@@ -1,9 +1,0 @@
----
-# handlers file for anthos_admin_docker_config
-- name: restart_docker
-  systemd:
-    name: docker
-    state: restarted
-    daemon_reload: yes
-  when: allow_service_restarts | default(True) | bool
-  listen: restart_docker

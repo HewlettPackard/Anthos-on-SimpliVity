@@ -1,3 +1,0 @@
----
-# vars file for prereqs
-role_python: '/usr/bin/python3'

@@ -1,7 +1,0 @@
----
-- hosts: anthos_admin
-  become: no
-  gather_facts: false
-
-  roles:
-    - role: admin_workstation/create_gke_cluster
